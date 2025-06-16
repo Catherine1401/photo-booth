@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photobooth Web</title>
+  <link rel="stylesheet" href="style/main.css" />
+</head>
+
+<body>
+  <header>
+    <h1>📸 Photobooth</h1>
+  </header>
+
+  <main class="container">
+    <!-- Webcam preview -->
+    <div class="webcam-box">
+      <video id="webcam" autoplay playsinline></video>
+      <canvas id="overlay" class="hidden"></canvas>
+      <div id="countdown" class="countdown hidden">3</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <label for="filter-select">🎨 Filter:</label>
+      <select id="filter-select">
+        <option value="none">Không</option>
+        <option value="grayscale(100%)">Grayscale</option>
+        <option value="sepia(100%)">Sepia</option>
+        <option value="contrast(150%)">High Contrast</option>
+        <option value="blur(2px)">Blur</option>
+      </select>
+
+      <label for="frame-select">🖼️ Khung ảnh:</label>
+      <select id="frame-select">
+        <option value="">Không</option>
+        <option value="assets/frames/frame1.png">Khung 1</option>
+        <option value="assets/frames/frame2.png">Khung 2</option>
+      </select>
+
+      <button id="capture-btn">📷 Chụp 4 Tấm</button>
+      <button id="reset-btn" class="hidden">🔁 Chụp Lại</button>
+    </div>
+
+    <!-- Ảnh preview -->
+    <div class="photos" id="photo-strip"></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Photobooth App</p>
+  </footer>
+
+  <script src="scripts/app.js"></script>
+</body>
+
+</html>
