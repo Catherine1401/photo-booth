@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Photobooth Web</title>
-  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="./style/main.css" />
 </head>
 
 <body>
@@ -14,44 +15,91 @@
   </header>
 
   <main class="container">
-    <!-- Webcam preview -->
+    <!-- Bên trái: Webcam preview -->
     <div class="webcam-box">
-      <video id="webcam" autoplay playsinline></video>
-      <canvas id="overlay" class="hidden"></canvas>
+      <video id="webcam" autoplay playsinline muted></video>
+      <canvas id="overlay"></canvas>
       <div id="countdown" class="countdown hidden">3</div>
     </div>
 
-    <!-- Controls -->
-    <div class="controls">
+    <!-- Bên phải: dải ảnh đã chụp + ảnh ghép -->
+    <div class="photo-strip">
+      <!-- Dải ảnh từng tấm -->
+      <div id="photo-strip"></div>
+
+      <!-- Ảnh ghép hoàn chỉnh -->
+      <div class="final-result hidden" id="final-result">
+        <h3>🖼️ Ảnh hoàn chỉnh</h3>
+        <canvas id="final-canvas" width="800" height="1600"></canvas>
+        <button id="download-final-btn">⬇️ Tải ảnh tổng</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Controls phía dưới toàn bộ -->
+  <section class="controls">
+    <div class="filter-control">
       <label for="filter-select">🎨 Filter:</label>
       <select id="filter-select">
         <option value="none">Không</option>
-        <option value="grayscale(100%)">Grayscale</option>
-        <option value="sepia(100%)">Sepia</option>
-        <option value="contrast(150%)">High Contrast</option>
-        <option value="blur(2px)">Blur</option>
+        <option value="grayscale">Grayscale</option>
+        <option value="sepia">Sepia</option>
+        <option value="contrast">High Contrast</option>
+        <option value="blur">Blur</option>
+        <option value="bright">Bright</option>
+        <option value="vibrant">Vibrant</option>
+        <option value="retro">Retro</option>
+        <option value="negative">Negative</option>
+        <option value="dramatic">Dramatic</option>
+        <option value="vintage">Vintage</option>
+        <option value="oldfilm">Old Film</option>
+        <option value="neon">Neon</option>
+        <option value="noir">Noir</option>
+        <option value="instagram">Instagram</option>
+        <option value="portrait">Portrait</option>
+        <option value="modern">Modern</option>
+        <option value="summer">Summer</option>
+        <option value="autumn">Autumn</option>
+        <option value="winter">Winter</option>
+        <option value="spring">Spring</option>
+        <option value="cyberpunk">Cyberpunk</option>
+        <option value="sunset">Sunset</option>
+        <option value="moody">Moody</option>
+        <option value="popart">Pop Art</option>
+        <option value="pastel">Pastel</option>
+        <option value="cinematic">Cinematic</option>
+        <option value="tropical">Tropical</option>
+        <option value="nordic">Nordic</option>
+        <option value="vibrant">Vibrant</option>
+        <option value="natural">Natural</option>
+        <option value="fashion">Fashion</option>
+        <option value="minimal">Minimal</option>
+        <option value="urban">Urban</option>
+        <option value="lifestyle">Lifestyle</option>
+        <option value="editorial">Editorial</option>
       </select>
+    </div>
 
+    <div class="frame-control">
       <label for="frame-select">🖼️ Khung ảnh:</label>
       <select id="frame-select">
         <option value="">Không</option>
-        <option value="assets/frames/frame1.png">Khung 1</option>
-        <option value="assets/frames/frame2.png">Khung 2</option>
+        <option value="./frames/frame1.png">Khung 1</option>
+        <option value="./frames/frame2.png">Khung 2</option>
       </select>
-
-      <button id="capture-btn">📷 Chụp 4 Tấm</button>
-      <button id="reset-btn" class="hidden">🔁 Chụp Lại</button>
     </div>
 
-    <!-- Ảnh preview -->
-    <div class="photos" id="photo-strip"></div>
-  </main>
+    <div class="button-control">
+      <button id="capture-btn" disabled>📷 Chụp 4 Tấm</button>
+      <button id="reset-btn" class="hidden">🔁 Chụp Lại</button>
+    </div>
+  </section>
 
   <footer>
     <p>&copy; 2025 Photobooth App</p>
   </footer>
 
-  <script src="scripts/app.js"></script>
+  <script src="./scripts/app.js"></script>
 </body>
 
 </html>
