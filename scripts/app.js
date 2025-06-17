@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let filterValue = 'none';
   let frameImage = null;
-  let combinedCanvas, combinedCtx;
+  let combinedCanvas = document.createElement('canvas');
+  let combinedCtx = combinedCanvas.getContext('2d');
   let isCapturing = false;
   let capturedPhotos = [];
   let previewContainer = null;
@@ -57,24 +58,66 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // === Flash effect when taking photo ===
+  function showFlash() {
+    const flash = document.createElement('div');
+    flash.style.position = 'absolute';
+    flash.style.top = '0';
+    flash.style.left = '0';
+    flash.style.width = '100%';
+    flash.style.height = '100%';
+    flash.style.backgroundColor = 'white';
+    flash.style.opacity = '0';
+    flash.style.transition = 'opacity 0.1s';
+    flash.style.pointerEvents = 'none';
+    flash.style.zIndex = '1000';
+    
+    document.querySelector('.webcam-box').appendChild(flash);
+    
+    // Trigger flash
+    requestAnimationFrame(() => {
+      flash.style.opacity = '0.8';
+      setTimeout(() => {
+        flash.style.opacity = '0';
+        setTimeout(() => {
+          flash.remove();
+        }, 100);
+      }, 100);
+    });
+  }
+
   // === Countdown 3-2-1 animation ===
   function countdown(seconds) {
     return new Promise((resolve) => {
       let current = seconds;
-      countdownEl.textContent = current;
-      countdownEl.classList.remove('hidden');
+      updateCountdownOverlay(current);
 
       const timer = setInterval(() => {
         current--;
-        if (current === 0) {
+        if (current < 0) {
           clearInterval(timer);
-          countdownEl.classList.add('hidden');
+          overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
           resolve();
         } else {
-          countdownEl.textContent = current;
+          updateCountdownOverlay(current);
         }
       }, 1000);
     });
+  }
+
+  // === Countdown overlay ===
+  function updateCountdownOverlay(number) {
+    overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+    
+    // Draw number only
+    const centerX = overlayCanvas.width / 2;
+    const centerY = overlayCanvas.height / 2;
+    
+    overlayCtx.font = 'bold 120px Arial';
+    overlayCtx.fillStyle = 'white';
+    overlayCtx.textAlign = 'center';
+    overlayCtx.textBaseline = 'middle';
+    overlayCtx.fillText(number.toString(), centerX, centerY);
   }
 
   // === Filter handling ===
@@ -175,6 +218,67 @@ document.addEventListener("DOMContentLoaded", () => {
     container.appendChild(photoContainer);
   }
 
+  // === Create combined 4-in-1 image ===
+  function createCombinedImage() {
+    return new Promise((resolve) => {
+      // Set canvas size for vertical layout
+      combinedCanvas.width = 800;
+      combinedCanvas.height = 3200; // 4 photos stacked vertically
+      combinedCtx.fillStyle = '#ffffff';
+      combinedCtx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+
+      const sectionHeight = combinedCanvas.height / 4; // Each photo section takes 1/4 of the height
+
+      // Create array of promises for image loading
+      const loadPromises = capturedPhotos.map((photo, index) => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            const y = index * sectionHeight;
+            
+            // Draw white background for the photo section
+            combinedCtx.fillStyle = '#f0f0f0';
+            combinedCtx.fillRect(0, y, combinedCanvas.width, sectionHeight);
+
+            // Calculate dimensions to maintain aspect ratio while filling the space
+            const photoAspectRatio = img.naturalWidth / img.naturalHeight;
+            const targetAspectRatio = combinedCanvas.width / sectionHeight;
+            
+            let sourceX = 0, sourceY = 0, sourceWidth = img.naturalWidth, sourceHeight = img.naturalHeight;
+            
+            if (photoAspectRatio > targetAspectRatio) {
+              // Photo is wider than target - crop sides
+              sourceWidth = img.naturalHeight * targetAspectRatio;
+              sourceX = (img.naturalWidth - sourceWidth) / 2;
+            } else {
+              // Photo is taller than target - crop top/bottom
+              sourceHeight = img.naturalWidth / targetAspectRatio;
+              sourceY = (img.naturalHeight - sourceHeight) / 2;
+            }
+
+            // Draw the photo with proper cropping
+            combinedCtx.drawImage(
+              img,
+              sourceX, sourceY, sourceWidth, sourceHeight,  // Source rectangle
+              0, y, combinedCanvas.width, sectionHeight     // Destination rectangle
+            );
+            resolve();
+          };
+          img.src = photo.src;
+        });
+      });
+
+      // Wait for all images to load and draw
+      Promise.all(loadPromises).then(() => {
+        // Draw frame if selected
+        if (frameImage) {
+          combinedCtx.drawImage(frameImage, 0, 0, combinedCanvas.width, combinedCanvas.height);
+        }
+        resolve();
+      });
+    });
+  }
+
   // === Update photo sequence to maintain filter ===
   function takePhotoSequence() {
     if (isCapturing) return;
@@ -183,21 +287,57 @@ document.addEventListener("DOMContentLoaded", () => {
     const captureButton = document.getElementById('capture-btn');
     captureButton.disabled = true;
     
+    // Initialize preview container if it doesn't exist
+    if (!previewContainer) {
+      previewContainer = createPreviewContainer();
+      document.getElementById('photo-strip').appendChild(previewContainer);
+    }
+    
+    // Clear previous photos
+    capturedPhotos = [];
+    
     const totalPhotos = 4;
     let currentPhoto = 0;
     
-    const captureInterval = setInterval(() => {
+    const captureNextPhoto = async () => {
       if (currentPhoto < totalPhotos) {
+        // Show countdown before each photo
+        await countdown(3);
+        showFlash(); // Show flash effect
+        
+        // Capture photo
         const img = capturePhoto();
+        capturedPhotos.push(img); // Store the photo in array
+        
+        // Add to preview
         addPhotoToPreview(previewContainer, img.src, currentPhoto);
         currentPhoto++;
-      } else {
-        clearInterval(captureInterval);
-        isCapturing = false;
-        captureButton.disabled = false;
-        showDownloadCombined();
+        
+        if (currentPhoto < totalPhotos) {
+          // Start next photo immediately
+          captureNextPhoto();
+        } else {
+          // All photos taken
+          isCapturing = false;
+          captureButton.disabled = false;
+          
+          // Create combined image and show download button
+          await createCombinedImage();
+          showDownloadCombined();
+          
+          // Wait a moment before removing preview
+          setTimeout(() => {
+            if (previewContainer) {
+              previewContainer.remove();
+              previewContainer = null;
+            }
+          }, 1000); // 1 second delay
+        }
       }
-    }, 1000);
+    };
+
+    // Start the sequence
+    captureNextPhoto();
   }
 
   // === Hiển thị nút tải ảnh khung 4in1 ===
@@ -271,6 +411,8 @@ document.addEventListener("DOMContentLoaded", () => {
       previewContainer.remove();
       previewContainer = null;
     }
+    // Clear overlay when resetting
+    overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
   });
 
   // === Start webcam when ready ===
