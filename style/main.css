@@ -289,7 +289,7 @@ label {
   }
 }
 
-/* Flash Effect */
+/* Flash effect */
 .flash {
   position: absolute;
   top: 0;
@@ -301,7 +301,19 @@ label {
   transition: opacity 0.1s ease;
   pointer-events: none;
   z-index: 100;
-  animation: fadeIn 0.1s ease-out;
+  animation: flash 0.2s ease-out;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* Responsive Design */
@@ -462,7 +474,7 @@ label {
 
 /* Flash effect enhancement */
 .flash {
-  animation: fadeIn 0.1s ease-out;
+  animation: flash 0.2s ease-out;
 }
 
 /* Countdown enhancement */

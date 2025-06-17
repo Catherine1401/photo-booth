@@ -982,10 +982,15 @@ async function takePhotoSequence() {
       downloadBtn.remove();
     }
     
-    const initialCountdown = parseInt(countdownTimeSelect.value);
-    await countdown(initialCountdown);
+    // Lấy thời gian đếm ngược từ select
+    const countdownTime = parseInt(countdownTimeSelect.value);
+    
+    // Đếm ngược lần đầu
+    await countdown(countdownTime);
     
     for (let i = 0; i < 4; i++) {
+      // Điều chỉnh độ sáng của webcam trước khi chụp
+      adjustWebcamBrightness();
       showFlash();
       
       // Capture photo with current filter
@@ -1008,7 +1013,8 @@ async function takePhotoSequence() {
       addPhotoToPreview(previewContainer, framedPhoto, capturedPhotos.length - 1);
 
       if (i < 3) {
-        await countdown(2);
+        // Sử dụng cùng thời gian đếm ngược cho các lần chụp tiếp theo
+        await countdown(countdownTime);
       }
     }
 
@@ -1192,7 +1198,6 @@ async function applyFrameToPhoto(photoData, frameType) {
 
 // === UI Effects ===
 function showFlash() {
-  if (isCapturing) return;
   const flashDuration = document.getElementById('flash-duration');
   // Chỉ tạo flash khi switch được bật
   if (!flashDuration.checked) return;
@@ -1215,20 +1220,22 @@ function showFlash() {
   });
 }
 
-function countdown(seconds) {
+async function countdown(seconds) {
   return new Promise((resolve) => {
-    let current = seconds;
-    countdownEl.textContent = current;
+    countdownEl.textContent = seconds;
     countdownEl.classList.remove('hidden');
-
-    const timer = setInterval(() => {
-      current--;
-      if (current < 0) {
-        clearInterval(timer);
-        countdownEl.classList.add('hidden');
-        resolve();
-      } else {
-        countdownEl.textContent = current;
+    
+    const interval = setInterval(() => {
+      seconds--;
+      countdownEl.textContent = seconds;
+      
+      if (seconds === 0) {
+        // Hiển thị số 0 trong 1 giây trước khi ẩn
+        setTimeout(() => {
+          countdownEl.classList.add('hidden');
+          resolve();
+        }, 1000);
+        clearInterval(interval);
       }
     }, 1000);
   });
@@ -1544,7 +1551,6 @@ function setUIState(isCapturing) {
 
 // Sửa lại hàm adjustWebcamBrightness
 function adjustWebcamBrightness() {
-  if (isCapturing) return;
   const flashDuration = document.getElementById('flash-duration');
   if (flashDuration.checked) {
     // Tăng độ sáng của webcam
