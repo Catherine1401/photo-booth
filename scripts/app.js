@@ -111,23 +111,76 @@ document.addEventListener("DOMContentLoaded", () => {
   // === Filter handling ===
   function setupFilters() {
     filterSelect.addEventListener('change', () => {
-      webcam.classList.forEach(className => {
-        if (className.startsWith('filter-')) {
-          webcam.classList.remove(className);
-        }
-      });
-      
       const selectedFilter = filterSelect.value;
-      if (selectedFilter) {
-        webcam.classList.add(`filter-${selectedFilter}`);
-      }
+      webcam.style.filter = getFilterStyle(selectedFilter);
     });
   }
 
-  // === Apply filter to captured photos ===
-  function applyFilterToPhoto(img, filterName) {
-    if (filterName) {
-      img.classList.add(`filter-${filterName}`);
+  // === Get filter style based on filter name ===
+  function getFilterStyle(filterName) {
+    const filterStyles = {
+      // Basic Filters
+      'normal': 'none',
+      'grayscale': 'grayscale(100%)',
+      'sepia': 'sepia(80%)',
+      'invert': 'invert(100%)',
+      
+      // Instagram-like Filters
+      'clarendon': 'contrast(120%) saturate(150%) brightness(110%)',
+      'gingham': 'brightness(105%) contrast(110%) saturate(90%)',
+      'moon': 'grayscale(100%) contrast(110%) brightness(110%)',
+      'lark': 'contrast(90%) brightness(110%) saturate(90%)',
+      'reyes': 'sepia(22%) contrast(110%) brightness(110%) saturate(75%)',
+      'juno': 'contrast(120%) brightness(110%) saturate(130%) sepia(10%)',
+      'slumber': 'brightness(105%) contrast(110%) saturate(85%) sepia(25%)',
+      'crema': 'contrast(110%) brightness(110%) saturate(75%) sepia(20%)',
+      'ludwig': 'contrast(105%) brightness(105%) saturate(110%)',
+      'aden': 'contrast(90%) brightness(120%) saturate(85%) hue-rotate(-20deg)',
+      'perpetua': 'contrast(110%) brightness(110%) saturate(90%) sepia(30%)',
+      
+      // Modern Filters
+      'vintage': 'sepia(50%) contrast(120%) brightness(90%) saturate(80%)',
+      'noir': 'grayscale(100%) contrast(150%) brightness(90%)',
+      'dramatic': 'contrast(150%) brightness(90%) saturate(120%)',
+      'portrait': 'contrast(120%) brightness(110%) saturate(110%)',
+      'cinematic': 'contrast(130%) brightness(90%) saturate(110%)',
+      'fashion': 'contrast(120%) brightness(110%) saturate(130%)',
+      'editorial': 'contrast(130%) brightness(90%) saturate(110%)',
+      
+      // Seasonal Filters
+      'summer': 'brightness(110%) saturate(150%) contrast(110%)',
+      'autumn': 'sepia(30%) saturate(150%) contrast(110%) brightness(105%)',
+      'winter': 'brightness(110%) saturate(80%) contrast(110%)',
+      'spring': 'brightness(110%) saturate(130%) contrast(110%)',
+      
+      // Artistic Filters
+      'cyberpunk': 'brightness(120%) saturate(200%) contrast(150%) hue-rotate(30deg)',
+      'retro': 'sepia(50%) contrast(120%) brightness(90%) saturate(80%)',
+      'neon': 'brightness(120%) saturate(200%) contrast(150%)',
+      'pastel': 'brightness(110%) saturate(80%) contrast(90%)',
+      'popart': 'saturate(200%) contrast(150%) brightness(110%)',
+      
+      // Mood Filters
+      'moody': 'brightness(90%) contrast(120%) saturate(90%)',
+      'sunset': 'sepia(30%) saturate(150%) brightness(110%) contrast(110%)',
+      'tropical': 'brightness(110%) saturate(180%) contrast(110%)',
+      'nordic': 'brightness(110%) saturate(90%) contrast(110%)',
+      
+      // Professional Filters
+      'natural': 'contrast(110%) brightness(105%) saturate(110%)',
+      'minimal': 'contrast(110%) brightness(110%) saturate(90%)',
+      'urban': 'contrast(120%) brightness(90%) saturate(110%)',
+      'lifestyle': 'contrast(110%) brightness(110%) saturate(120%)'
+    };
+    
+    return filterStyles[filterName] || '';
+  }
+
+  // === Apply filter to canvas context ===
+  function applyFilterToContext(context, filterName) {
+    const filterStyle = getFilterStyle(filterName);
+    if (filterStyle) {
+      context.filter = filterStyle;
     }
   }
 
@@ -139,14 +192,16 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.width = webcam.videoWidth;
     canvas.height = webcam.videoHeight;
     
+    // Áp dụng filter cho context trước khi vẽ
+    if (filterSelect.value) {
+      applyFilterToContext(context, filterSelect.value);
+    }
+    
+    // Vẽ ảnh từ webcam lên canvas
     context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
     
     const img = document.createElement('img');
     img.src = canvas.toDataURL('image/jpeg');
-    
-    if (filterSelect.value) {
-      applyFilterToPhoto(img, filterSelect.value);
-    }
     
     return img;
   }
@@ -160,6 +215,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // === Add photo to preview ===
   function addPhotoToPreview(container, photo, index) {
+    if (!container) {
+      console.error('Preview container is null');
+      return;
+    }
+
     const photoContainer = document.createElement('div');
     photoContainer.className = 'photo-container';
 
@@ -204,11 +264,20 @@ document.addEventListener("DOMContentLoaded", () => {
               sourceY = (img.naturalHeight - sourceHeight) / 2;
             }
 
+            // Áp dụng filter cho context trước khi vẽ
+            if (filterSelect.value) {
+              applyFilterToContext(combinedCtx, filterSelect.value);
+            }
+
             combinedCtx.drawImage(
               img,
               sourceX, sourceY, sourceWidth, sourceHeight,
               0, y, combinedCanvas.width, sectionHeight
             );
+
+            // Reset filter sau khi vẽ
+            combinedCtx.filter = 'none';
+            
             resolve();
           };
           img.src = photo.src;
@@ -249,6 +318,10 @@ document.addEventListener("DOMContentLoaded", () => {
     container.appendChild(finalImg);
     container.appendChild(buttonContainer);
     photoStrip.appendChild(container);
+
+    // Ẩn nút chụp ảnh và hiện nút làm lại
+    captureBtn.style.display = 'none';
+    resetBtn.style.display = 'block';
   }
 
   // === Frame selection handler ===
@@ -270,12 +343,28 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isCapturing) return;
     
     isCapturing = true;
-    captureBtn.disabled = true;
     
-    if (!previewContainer) {
-      previewContainer = createPreviewContainer();
-      photoStrip.appendChild(previewContainer);
-    }
+    // Vô hiệu hóa tất cả điều khiển
+    captureBtn.disabled = true;
+    captureBtn.style.opacity = '0.5';
+    captureBtn.style.cursor = 'not-allowed';
+    
+    resetBtn.disabled = true;
+    resetBtn.style.opacity = '0.5';
+    resetBtn.style.cursor = 'not-allowed';
+    
+    filterSelect.disabled = true;
+    filterSelect.style.opacity = '0.5';
+    filterSelect.style.cursor = 'not-allowed';
+    
+    frameSelect.disabled = true;
+    frameSelect.style.opacity = '0.5';
+    frameSelect.style.cursor = 'not-allowed';
+    
+    // Tạo preview container mới mỗi lần chụp
+    previewContainer = createPreviewContainer();
+    photoStrip.innerHTML = ''; // Xóa nội dung cũ
+    photoStrip.appendChild(previewContainer);
     
     capturedPhotos = [];
     
@@ -297,7 +386,23 @@ document.addEventListener("DOMContentLoaded", () => {
           captureNextPhoto();
         } else {
           isCapturing = false;
+          
+          // Kích hoạt lại tất cả điều khiển
           captureBtn.disabled = false;
+          captureBtn.style.opacity = '1';
+          captureBtn.style.cursor = 'pointer';
+          
+          resetBtn.disabled = false;
+          resetBtn.style.opacity = '1';
+          resetBtn.style.cursor = 'pointer';
+          
+          filterSelect.disabled = false;
+          filterSelect.style.opacity = '1';
+          filterSelect.style.cursor = 'pointer';
+          
+          frameSelect.disabled = false;
+          frameSelect.style.opacity = '1';
+          frameSelect.style.cursor = 'pointer';
           
           await createCombinedImage();
           showDownloadCombined();
@@ -317,23 +422,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // === Event handlers ===
   captureBtn.addEventListener('click', () => {
+    if (isCapturing) return;
     console.log("Đã nhấn nút chụp ảnh");
     takePhotoSequence();
   });
 
   resetBtn.addEventListener('click', () => {
+    if (isCapturing) return;
+    
     photoStrip.innerHTML = '';
-    captureBtn.disabled = false;
     capturedPhotos = [];
     if (previewContainer) {
       previewContainer.remove();
       previewContainer = null;
     }
     overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+    
+    // Kích hoạt lại tất cả điều khiển
+    captureBtn.disabled = false;
+    captureBtn.style.opacity = '1';
+    captureBtn.style.cursor = 'pointer';
+    
+    resetBtn.disabled = false;
+    resetBtn.style.opacity = '1';
+    resetBtn.style.cursor = 'pointer';
+    
+    filterSelect.disabled = false;
+    filterSelect.style.opacity = '1';
+    filterSelect.style.cursor = 'pointer';
+    
+    frameSelect.disabled = false;
+    frameSelect.style.opacity = '1';
+    frameSelect.style.cursor = 'pointer';
+    
+    // Hiện nút chụp ảnh và ẩn nút làm lại
+    captureBtn.style.display = 'block';
+    resetBtn.style.display = 'none';
+    
     takePhotoSequence();
   });
 
   // === Initialize ===
   startWebcam();
   setupFilters();
+  
+  // Ẩn nút làm lại khi khởi động
+  resetBtn.style.display = 'none';
 });

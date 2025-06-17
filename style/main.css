@@ -274,3 +274,231 @@ button {
 .hidden {
   display: none !important;
 }
+
+/* Filters */
+.filter-grayscale {
+  filter: grayscale(100%);
+}
+
+.filter-sepia {
+  filter: sepia(100%);
+}
+
+.filter-contrast {
+  filter: contrast(150%);
+}
+
+.filter-blur {
+  filter: blur(2px);
+}
+
+.filter-bright {
+  filter: brightness(150%);
+}
+
+.filter-vibrant {
+  filter: saturate(200%) contrast(120%);
+}
+
+.filter-retro {
+  filter: sepia(50%) contrast(120%) brightness(90%);
+}
+
+.filter-negative {
+  filter: invert(100%);
+}
+
+.filter-dramatic {
+  filter: contrast(150%) brightness(90%) saturate(120%);
+}
+
+.filter-vintage {
+  filter: sepia(80%) contrast(110%) brightness(90%);
+}
+
+.filter-oldfilm {
+  filter: sepia(50%) contrast(120%) brightness(90%) grayscale(20%);
+}
+
+.filter-neon {
+  filter: brightness(120%) saturate(200%) contrast(150%);
+}
+
+.filter-noir {
+  filter: grayscale(100%) contrast(150%) brightness(90%);
+}
+
+.filter-instagram {
+  filter: contrast(110%) brightness(110%) saturate(130%);
+}
+
+.filter-portrait {
+  filter: contrast(120%) brightness(110%) saturate(110%);
+}
+
+.filter-modern {
+  filter: contrast(110%) brightness(110%) saturate(120%);
+}
+
+.filter-summer {
+  filter: brightness(110%) saturate(150%) contrast(110%);
+}
+
+.filter-autumn {
+  filter: sepia(30%) saturate(150%) contrast(110%);
+}
+
+.filter-winter {
+  filter: brightness(110%) saturate(80%) contrast(110%);
+}
+
+.filter-spring {
+  filter: brightness(110%) saturate(130%) contrast(110%);
+}
+
+.filter-cyberpunk {
+  filter: brightness(120%) saturate(200%) contrast(150%) hue-rotate(30deg);
+}
+
+.filter-sunset {
+  filter: sepia(30%) saturate(150%) brightness(110%) contrast(110%);
+}
+
+.filter-moody {
+  filter: brightness(90%) contrast(120%) saturate(90%);
+}
+
+.filter-popart {
+  filter: saturate(200%) contrast(150%) brightness(110%);
+}
+
+.filter-pastel {
+  filter: brightness(110%) saturate(80%) contrast(90%);
+}
+
+.filter-cinematic {
+  filter: contrast(120%) brightness(90%) saturate(110%);
+}
+
+.filter-tropical {
+  filter: brightness(110%) saturate(180%) contrast(110%);
+}
+
+.filter-nordic {
+  filter: brightness(110%) saturate(90%) contrast(110%);
+}
+
+.filter-natural {
+  filter: contrast(110%) brightness(105%) saturate(110%);
+}
+
+.filter-fashion {
+  filter: contrast(120%) brightness(110%) saturate(130%);
+}
+
+.filter-minimal {
+  filter: contrast(110%) brightness(110%) saturate(90%);
+}
+
+.filter-urban {
+  filter: contrast(120%) brightness(90%) saturate(110%);
+}
+
+.filter-lifestyle {
+  filter: contrast(110%) brightness(110%) saturate(120%);
+}
+
+.filter-editorial {
+  filter: contrast(130%) brightness(90%) saturate(110%);
+}
+
+/* Filter Select Styles */
+.control-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.control-select:hover {
+  border-color: #2196F3;
+}
+
+.control-select:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.control-select optgroup {
+  font-weight: bold;
+  color: #2196F3;
+  background-color: #f5f5f5;
+}
+
+.control-select option {
+  padding: 8px;
+  font-weight: normal;
+  color: #333;
+}
+
+.control-select option:hover {
+  background-color: #e3f2fd;
+}
+
+/* Filter Effects */
+.filter-grayscale { filter: grayscale(100%); }
+.filter-sepia { filter: sepia(80%); }
+.filter-invert { filter: invert(100%); }
+
+/* Instagram Filters */
+.filter-clarendon { filter: contrast(120%) saturate(150%) brightness(110%); }
+.filter-gingham { filter: brightness(105%) contrast(110%) saturate(90%); }
+.filter-moon { filter: grayscale(100%) contrast(110%) brightness(110%); }
+.filter-lark { filter: contrast(90%) brightness(110%) saturate(90%); }
+.filter-reyes { filter: sepia(22%) contrast(110%) brightness(110%) saturate(75%); }
+.filter-juno { filter: contrast(120%) brightness(110%) saturate(130%) sepia(10%); }
+.filter-slumber { filter: brightness(105%) contrast(110%) saturate(85%) sepia(25%); }
+.filter-crema { filter: contrast(110%) brightness(110%) saturate(75%) sepia(20%); }
+.filter-ludwig { filter: contrast(105%) brightness(105%) saturate(110%); }
+.filter-aden { filter: contrast(90%) brightness(120%) saturate(85%) hue-rotate(-20deg); }
+.filter-perpetua { filter: contrast(110%) brightness(110%) saturate(90%) sepia(30%); }
+
+/* Modern Filters */
+.filter-vintage { filter: sepia(50%) contrast(120%) brightness(90%) saturate(80%); }
+.filter-noir { filter: grayscale(100%) contrast(150%) brightness(90%); }
+.filter-dramatic { filter: contrast(150%) brightness(90%) saturate(120%); }
+.filter-portrait { filter: contrast(120%) brightness(110%) saturate(110%); }
+.filter-cinematic { filter: contrast(130%) brightness(90%) saturate(110%); }
+.filter-fashion { filter: contrast(120%) brightness(110%) saturate(130%); }
+.filter-editorial { filter: contrast(130%) brightness(90%) saturate(110%); }
+
+/* Seasonal Filters */
+.filter-summer { filter: brightness(110%) saturate(150%) contrast(110%); }
+.filter-autumn { filter: sepia(30%) saturate(150%) contrast(110%) brightness(105%); }
+.filter-winter { filter: brightness(110%) saturate(80%) contrast(110%); }
+.filter-spring { filter: brightness(110%) saturate(130%) contrast(110%); }
+
+/* Artistic Filters */
+.filter-cyberpunk { filter: brightness(120%) saturate(200%) contrast(150%) hue-rotate(30deg); }
+.filter-retro { filter: sepia(50%) contrast(120%) brightness(90%) saturate(80%); }
+.filter-neon { filter: brightness(120%) saturate(200%) contrast(150%); }
+.filter-pastel { filter: brightness(110%) saturate(80%) contrast(90%); }
+.filter-popart { filter: saturate(200%) contrast(150%) brightness(110%); }
+
+/* Mood Filters */
+.filter-moody { filter: brightness(90%) contrast(120%) saturate(90%); }
+.filter-sunset { filter: sepia(30%) saturate(150%) brightness(110%) contrast(110%); }
+.filter-tropical { filter: brightness(110%) saturate(180%) contrast(110%); }
+.filter-nordic { filter: brightness(110%) saturate(90%) contrast(110%); }
+
+/* Professional Filters */
+.filter-natural { filter: contrast(110%) brightness(105%) saturate(110%); }
+.filter-minimal { filter: contrast(110%) brightness(110%) saturate(90%); }
+.filter-urban { filter: contrast(120%) brightness(90%) saturate(110%); }
+.filter-lifestyle { filter: contrast(110%) brightness(110%) saturate(120%); }

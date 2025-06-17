@@ -25,43 +25,64 @@
       <div class="controls">
         <div class="filter-control">
           <label for="filter-select">Bộ lọc</label>
-          <select id="filter-select">
-            <option value="">Không có</option>
+          <select id="filter-select" class="control-select">
+            <option value="normal">Bình thường</option>
             <option value="grayscale">Đen trắng</option>
             <option value="sepia">Sepia</option>
-            <option value="contrast">Tương phản</option>
-            <option value="blur">Mờ</option>
-            <option value="bright">Sáng</option>
-            <option value="vibrant">Rực rỡ</option>
-            <option value="retro">Retro</option>
-            <option value="negative">Âm bản</option>
-            <option value="dramatic">Kịch tính</option>
-            <option value="vintage">Vintage</option>
-            <option value="oldfilm">Phim cũ</option>
-            <option value="neon">Neon</option>
-            <option value="noir">Noir</option>
-            <option value="instagram">Instagram</option>
-            <option value="portrait">Chân dung</option>
-            <option value="modern">Hiện đại</option>
-            <option value="summer">Mùa hè</option>
-            <option value="autumn">Mùa thu</option>
-            <option value="winter">Mùa đông</option>
-            <option value="spring">Mùa xuân</option>
-            <option value="cyberpunk">Cyberpunk</option>
-            <option value="sunset">Hoàng hôn</option>
-            <option value="moody">Tâm trạng</option>
-            <option value="popart">Pop Art</option>
-            <option value="pastel">Pastel</option>
-            <option value="cinematic">Điện ảnh</option>
-            <option value="tropical">Nhiệt đới</option>
-            <option value="nordic">Bắc Âu</option>
-            <option value="vibrant">Rực rỡ</option>
-            <option value="natural">Tự nhiên</option>
-            <option value="fashion">Thời trang</option>
-            <option value="minimal">Tối giản</option>
-            <option value="urban">Đô thị</option>
-            <option value="lifestyle">Phong cách sống</option>
-            <option value="editorial">Biên tập</option>
+            <option value="invert">Đảo màu</option>
+            
+            <optgroup label="Instagram">
+              <option value="clarendon">Clarendon</option>
+              <option value="gingham">Gingham</option>
+              <option value="moon">Moon</option>
+              <option value="lark">Lark</option>
+              <option value="reyes">Reyes</option>
+              <option value="juno">Juno</option>
+              <option value="slumber">Slumber</option>
+              <option value="crema">Crema</option>
+              <option value="ludwig">Ludwig</option>
+              <option value="aden">Aden</option>
+              <option value="perpetua">Perpetua</option>
+            </optgroup>
+            
+            <optgroup label="Hiện đại">
+              <option value="vintage">Vintage</option>
+              <option value="noir">Noir</option>
+              <option value="dramatic">Dramatic</option>
+              <option value="portrait">Portrait</option>
+              <option value="cinematic">Cinematic</option>
+              <option value="fashion">Fashion</option>
+              <option value="editorial">Editorial</option>
+            </optgroup>
+            
+            <optgroup label="Theo mùa">
+              <option value="summer">Summer</option>
+              <option value="autumn">Autumn</option>
+              <option value="winter">Winter</option>
+              <option value="spring">Spring</option>
+            </optgroup>
+            
+            <optgroup label="Nghệ thuật">
+              <option value="cyberpunk">Cyberpunk</option>
+              <option value="retro">Retro</option>
+              <option value="neon">Neon</option>
+              <option value="pastel">Pastel</option>
+              <option value="popart">Pop Art</option>
+            </optgroup>
+            
+            <optgroup label="Tâm trạng">
+              <option value="moody">Moody</option>
+              <option value="sunset">Sunset</option>
+              <option value="tropical">Tropical</option>
+              <option value="nordic">Nordic</option>
+            </optgroup>
+            
+            <optgroup label="Chuyên nghiệp">
+              <option value="natural">Natural</option>
+              <option value="minimal">Minimal</option>
+              <option value="urban">Urban</option>
+              <option value="lifestyle">Lifestyle</option>
+            </optgroup>
           </select>
         </div>
 
