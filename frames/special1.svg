@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150" height="600" viewBox="0 0 150 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Modern minimalist frame -->
+  <defs>
+    <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="1" fill="#333" opacity="0.2"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="150" height="600" fill="white" stroke="#333" stroke-width="2"/>
+  <!-- Decorative border -->
+  <rect x="10" y="10" width="130" height="580" fill="none" stroke="url(#dots)" stroke-width="1"/>
+  <!-- Corner decorations -->
+  <path d="M0,0 L30,0 L30,2 L2,2 L2,30 L0,30 Z" fill="#333"/>
+  <path d="M120,0 L150,0 L150,30 L148,30 L148,2 L120,2 Z" fill="#333"/>
+  <path d="M0,570 L0,600 L30,600 L30,598 L2,598 L2,570 Z" fill="#333"/>
+  <path d="M120,598 L120,600 L150,600 L150,570 L148,570 L148,598 Z" fill="#333"/>
+</svg> 

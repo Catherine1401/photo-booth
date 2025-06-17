@@ -17,48 +17,46 @@
 }
 
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  line-height: 1.6;
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 /* Header */
 header {
-  background-color: var(--surface-color);
-  padding: 1rem;
   text-align: center;
-  box-shadow: var(--shadow);
-  margin-bottom: 1rem;
+  margin-bottom: 30px;
 }
 
 header h1 {
-  font-size: 1.5rem;
-  color: var(--primary-color);
+  color: #1a1a1a;
+  font-size: 2.5rem;
 }
 
 /* Main Container */
 .container {
-  width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
 }
 
-/* Webcam Box */
+/* Webcam Section */
+.webcam-section {
+  flex: 1;
+  max-width: 600px;
+}
+
 .webcam-box {
   position: relative;
-  background-color: var(--surface-color);
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  aspect-ratio: 4/3;
   width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
+  aspect-ratio: 4/3;
+  background: #000;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 20px;
 }
 
 #webcam {
@@ -78,144 +76,117 @@ header h1 {
 
 /* Photo Strip */
 .photo-strip {
-  background-color: var(--surface-color);
-  border-radius: var(--border-radius);
-  padding: 0.75rem;
-  box-shadow: var(--shadow);
-  width: 100%;
-  max-width: 300px;
-  margin: 0 auto;
-}
-
-.preview-container {
+  flex: 1;
+  max-width: 400px;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  width: 100%;
+  gap: 20px;
 }
 
 .photo-container {
   position: relative;
-  aspect-ratio: 4/3;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
   width: 100%;
-  max-width: 200px;
-  margin: 0 auto;
+  aspect-ratio: 3/4;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
 }
 
-.photo-container img {
+.photo-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo-wrapper img:not(.frame) {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+.photo-wrapper .frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 1;
+}
+
 /* Controls */
 .controls {
-  width: 100%;
-  max-width: 700px;
-  margin: 1rem auto;
-  padding: 1rem;
-  background-color: var(--surface-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .filter-control,
 .frame-control {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 8px;
 }
 
-.filter-control label,
-.frame-control label {
-  font-weight: 600;
-  color: var(--text-color);
-  font-size: 0.9rem;
+label {
+  font-weight: bold;
+  color: #333;
 }
 
-select {
-  padding: 0.5rem;
-  border: 2px solid #e0e0e0;
-  border-radius: var(--border-radius);
-  font-size: 0.9rem;
-  background-color: var(--surface-color);
+.control-select {
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
-select:hover {
-  border-color: var(--primary-color);
+.control-select:hover {
+  border-color: #4CAF50;
+}
+
+.control-select:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
 
 .button-control {
   display: flex;
-  gap: 0.5rem;
-  align-items: flex-end;
+  gap: 10px;
 }
 
 button {
-  padding: 0.5rem 1rem;
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 16px;
   border: none;
-  border-radius: var(--border-radius);
-  font-size: 0.9rem;
-  font-weight: 600;
+  border-radius: 8px;
+  background: #4CAF50;
+  color: white;
   cursor: pointer;
-  transition: var(--transition);
-  flex: 1;
+  transition: all 0.3s ease;
 }
 
-#capture-btn {
-  background-color: var(--primary-color);
-  color: white;
+button:hover {
+  background: #45a049;
+  transform: translateY(-2px);
 }
 
-#capture-btn:hover {
-  background-color: #1976D2;
-}
-
-#reset-btn {
-  background-color: #f44336;
-  color: white;
-}
-
-#reset-btn:hover {
-  background-color: #d32f2f;
-}
-
-/* Download Section */
-.download-section {
-  margin-top: 0.75rem;
-  padding: 0.75rem;
-  background-color: var(--surface-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  width: 100%;
-  max-width: 300px;
-  margin: 0.75rem auto 0;
-}
-
-.download-section img {
-  width: 100%;
-  height: auto;
-  border-radius: var(--border-radius);
-  margin: 0 auto 0.5rem;
-  display: block;
-}
-
-.button-container {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.button-container button {
-  flex: 1;
+button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Countdown */
@@ -224,10 +195,13 @@ button {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 6rem;
-  font-weight: bold;
+  font-size: 120px;
   color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.countdown.hidden {
+  display: none;
 }
 
 /* Flash Effect */
@@ -245,18 +219,16 @@ button {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .container {
-    grid-template-columns: 1fr;
-    padding: 0 0.5rem;
-  }
-
-  .controls {
-    grid-template-columns: 1fr;
-  }
-
-  .button-control {
     flex-direction: column;
+    align-items: center;
+  }
+
+  .webcam-section,
+  .photo-strip {
+    max-width: 100%;
+    width: 100%;
   }
 }
 

@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let combinedCtx = combinedCanvas.getContext('2d');
   let isCapturing = false;
   let capturedPhotos = [];
+  let originalPhotos = []; // Store original photos without frames
   let previewContainer = null;
 
   // === Webcam setup ===
@@ -40,17 +41,21 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       
       webcam.srcObject = stream;
-      webcam.play().catch(err => {
-        console.error('Error playing video:', err);
-        alert('Không thể phát video: ' + err.message);
+      
+      // Đợi webcam sẵn sàng
+      await new Promise((resolve) => {
+        webcam.onloadedmetadata = () => {
+          console.log('Webcam loaded:', webcam.videoWidth, 'x', webcam.videoHeight);
+          overlayCanvas.width = webcam.videoWidth;
+          overlayCanvas.height = webcam.videoHeight;
+          captureBtn.disabled = false;
+          resolve();
+        };
       });
 
-      webcam.addEventListener('loadedmetadata', () => {
-        console.log('Webcam loaded:', webcam.videoWidth, 'x', webcam.videoHeight);
-        overlayCanvas.width = webcam.videoWidth;
-        overlayCanvas.height = webcam.videoHeight;
-        captureBtn.disabled = false;
-      });
+      // Đợi thêm 1 giây để đảm bảo webcam hoạt động ổn định
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
     } catch (err) {
       console.error('Webcam error:', err);
       alert('Không thể truy cập webcam: ' + err.message);
@@ -200,10 +205,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Vẽ ảnh từ webcam lên canvas
     context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
     
-    const img = document.createElement('img');
-    img.src = canvas.toDataURL('image/jpeg');
-    
-    return img;
+    // Trả về URL của ảnh thay vì đối tượng img
+    return canvas.toDataURL('image/jpeg');
   }
 
   // === Create preview container ===
@@ -226,26 +229,323 @@ document.addEventListener("DOMContentLoaded", () => {
     const img = new Image();
     img.src = photo;
     img.alt = `Ảnh ${index + 1}`;
+    img.onload = () => {
+      console.log(`Preview image ${index + 1} loaded:`, img.width, 'x', img.height);
+    };
+    img.onerror = (err) => {
+      console.error(`Error loading preview image ${index + 1}:`, err);
+    };
 
     photoContainer.appendChild(img);
     container.appendChild(photoContainer);
   }
 
+  // === Apply frame to photo ===
+  function applyFrameToPhoto(photoData, framePath) {
+    return new Promise((resolve) => {
+      console.log('Applying frame:', framePath);
+      
+      if (!framePath) {
+        console.log('No frame selected, returning original photo');
+        resolve(photoData);
+        return;
+      }
+
+      const img = new Image();
+      img.onload = () => {
+        console.log('Frame loaded:', img.width, 'x', img.height);
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = 150;
+        canvas.height = 600;
+        const ctx = canvas.getContext('2d');
+
+        // Draw the photo
+        const photoImg = new Image();
+        photoImg.onload = () => {
+          console.log('Photo loaded:', photoImg.width, 'x', photoImg.height);
+          
+          // Calculate aspect ratio and dimensions
+          const photoAspectRatio = photoImg.width / photoImg.height;
+          const targetAspectRatio = canvas.width / canvas.height;
+          
+          let sourceX = 0, sourceY = 0, sourceWidth = photoImg.width, sourceHeight = photoImg.height;
+          let destX = 0, destY = 0, destWidth = canvas.width, destHeight = canvas.height;
+          
+          if (photoAspectRatio > targetAspectRatio) {
+            // Photo is wider than target
+            destWidth = canvas.height * photoAspectRatio;
+            destX = (canvas.width - destWidth) / 2;
+          } else {
+            // Photo is taller than target
+            destHeight = canvas.width / photoAspectRatio;
+            destY = (canvas.height - destHeight) / 2;
+          }
+
+          console.log('Drawing photo with dimensions:', {
+            source: { x: sourceX, y: sourceY, width: sourceWidth, height: sourceHeight },
+            dest: { x: destX, y: destY, width: destWidth, height: destHeight }
+          });
+
+          // Clear canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          // Draw the photo with proper scaling
+          ctx.drawImage(
+            photoImg,
+            sourceX, sourceY, sourceWidth, sourceHeight,
+            destX, destY, destWidth, destHeight
+          );
+          
+          // Draw the frame on top
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          
+          // Verify the canvas has content
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const hasContent = imageData.data.some(pixel => pixel !== 0);
+          console.log('Canvas has content:', hasContent);
+          
+          const result = canvas.toDataURL('image/png');
+          console.log('Frame applied successfully');
+          resolve(result);
+        };
+        photoImg.onerror = (err) => {
+          console.error('Error loading photo:', err);
+          resolve(photoData);
+        };
+        photoImg.src = photoData;
+      };
+      img.onerror = (err) => {
+        console.error('Error loading frame:', err);
+        resolve(photoData);
+      };
+      img.src = framePath;
+    });
+  }
+
+  // === Frame selection handler ===
+  frameSelect.addEventListener('change', async () => {
+    console.log('Frame selection changed:', frameSelect.value);
+    
+    if (capturedPhotos.length === 0) {
+      console.log('No photos to apply frame to');
+      return;
+    }
+
+    const selectedFrame = frameSelect.value;
+    
+    console.log('Applying new frame to', originalPhotos.length, 'photos');
+    
+    // Apply new frame to all photos
+    const newPhotos = await Promise.all(
+      originalPhotos.map((photo, index) => {
+        console.log(`Applying frame to photo ${index + 1}`);
+        return applyFrameToPhoto(photo, selectedFrame);
+      })
+    );
+    
+    console.log('All frames applied');
+    capturedPhotos = newPhotos;
+
+    // Update preview
+    console.log('Updating preview');
+    const previewContainer = document.querySelector('.preview-container');
+    if (previewContainer) {
+      // Clear existing preview
+      previewContainer.innerHTML = '';
+      
+      // Add each photo to preview
+      capturedPhotos.forEach((photo, index) => {
+        addPhotoToPreview(previewContainer, photo, index);
+      });
+    }
+
+    // Update combined image
+    console.log('Creating combined image');
+    await createCombinedImage();
+    
+    // Update download section if it exists
+    const downloadSection = document.querySelector('.download-section');
+    if (downloadSection) {
+      console.log('Updating download section');
+      const finalImg = downloadSection.querySelector('img');
+      if (finalImg) {
+        finalImg.src = combinedCanvas.toDataURL('image/png');
+      }
+    }
+  });
+
+  // === Reset button handler ===
+  resetBtn.addEventListener('click', () => {
+    if (isCapturing) return;
+    
+    // Xóa cả preview và download section
+    photoStrip.innerHTML = '';
+    capturedPhotos = [];
+    originalPhotos = [];
+    if (previewContainer) {
+      previewContainer.remove();
+      previewContainer = null;
+    }
+    overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+    
+    // Kích hoạt lại tất cả điều khiển
+    captureBtn.disabled = false;
+    captureBtn.style.opacity = '1';
+    captureBtn.style.cursor = 'pointer';
+    
+    resetBtn.disabled = false;
+    resetBtn.style.opacity = '1';
+    resetBtn.style.cursor = 'pointer';
+    
+    filterSelect.disabled = false;
+    filterSelect.style.opacity = '1';
+    filterSelect.style.cursor = 'pointer';
+    
+    frameSelect.disabled = false;
+    frameSelect.style.opacity = '1';
+    frameSelect.style.cursor = 'pointer';
+    
+    // Hiện nút chụp ảnh và ẩn nút làm lại
+    captureBtn.style.display = 'block';
+    resetBtn.style.display = 'none';
+  });
+
+  // === Photo capture sequence ===
+  async function takePhotoSequence() {
+    if (isCapturing) return;
+    isCapturing = true;
+
+    // Kiểm tra webcam đã sẵn sàng
+    if (webcam.readyState !== webcam.HAVE_ENOUGH_DATA) {
+      console.log('Webcam chưa sẵn sàng, vui lòng đợi...');
+      isCapturing = false;
+      return;
+    }
+
+    // Disable all controls
+    captureBtn.disabled = true;
+    resetBtn.disabled = true;
+    filterSelect.disabled = true;
+    frameSelect.disabled = true;
+
+    // Set visual feedback for disabled state
+    captureBtn.style.opacity = '0.5';
+    resetBtn.style.opacity = '0.5';
+    filterSelect.style.opacity = '0.5';
+    frameSelect.style.opacity = '0.5';
+    captureBtn.style.cursor = 'not-allowed';
+    resetBtn.style.cursor = 'not-allowed';
+    filterSelect.style.cursor = 'not-allowed';
+    frameSelect.style.cursor = 'not-allowed';
+
+    // Create new preview container
+    const previewContainer = document.createElement('div');
+    previewContainer.className = 'preview-container';
+    photoStrip.innerHTML = '';
+    photoStrip.appendChild(previewContainer);
+
+    capturedPhotos = [];
+    originalPhotos = [];
+
+    try {
+      for (let i = 0; i < 4; i++) {
+        // Hiển thị countdown
+        for (let j = 3; j >= 0; j--) {
+          countdownEl.textContent = j;
+          countdownEl.classList.remove('hidden');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        countdownEl.classList.add('hidden');
+
+        // Đợi 0.5 giây trước khi chụp
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Kiểm tra webcam trước khi chụp
+        if (webcam.readyState !== webcam.HAVE_ENOUGH_DATA) {
+          console.log('Webcam chưa sẵn sàng, bỏ qua lần chụp này');
+          continue;
+        }
+
+        // Capture photo
+        const photoData = capturePhoto();
+        originalPhotos.push(photoData);
+
+        // Apply current frame
+        const selectedFrame = frameSelect.value;
+        const framedPhoto = await applyFrameToPhoto(photoData, selectedFrame);
+        capturedPhotos.push(framedPhoto);
+
+        // Add photo to preview
+        addPhotoToPreview(previewContainer, framedPhoto, i);
+
+        // Show flash effect
+        showFlash();
+
+        // Đợi 1 giây trước khi bắt đầu countdown tiếp theo
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      // Create combined image
+      await createCombinedImage();
+
+      // Show download and retake buttons
+      showDownloadCombined();
+    } catch (error) {
+      console.error('Error during photo capture:', error);
+    } finally {
+      // Re-enable all controls
+      captureBtn.disabled = false;
+      resetBtn.disabled = false;
+      filterSelect.disabled = false;
+      frameSelect.disabled = false;
+
+      // Reset visual feedback
+      captureBtn.style.opacity = '1';
+      resetBtn.style.opacity = '1';
+      filterSelect.style.opacity = '1';
+      frameSelect.style.opacity = '1';
+      captureBtn.style.cursor = 'pointer';
+      resetBtn.style.cursor = 'pointer';
+      filterSelect.style.cursor = 'pointer';
+      frameSelect.style.cursor = 'pointer';
+
+      isCapturing = false;
+    }
+  }
+
+  // === Event handlers ===
+  captureBtn.addEventListener('click', () => {
+    if (isCapturing) return;
+    console.log("Đã nhấn nút chụp ảnh");
+    takePhotoSequence();
+  });
+
+  // === Initialize ===
+  startWebcam();
+  setupFilters();
+  
+  // Ẩn nút làm lại khi khởi động
+  resetBtn.style.display = 'none';
+
   // === Create combined 4-in-1 image ===
   function createCombinedImage() {
     return new Promise((resolve) => {
+      console.log('Creating combined image');
+      
       // Set canvas size for vertical layout with smaller dimensions
-      combinedCanvas.width = 150; // Giảm kích thước xuống
-      combinedCanvas.height = 600; // Giảm kích thước xuống
+      combinedCanvas.width = 150;
+      combinedCanvas.height = 600;
       combinedCtx.fillStyle = '#ffffff';
       combinedCtx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
 
       const sectionHeight = combinedCanvas.height / 4;
 
-      const loadPromises = capturedPhotos.map((photo, index) => {
+      const loadPromises = capturedPhotos.map((photoData, index) => {
         return new Promise((resolve) => {
           const img = new Image();
           img.onload = () => {
+            console.log(`Drawing photo ${index + 1} to combined image`);
             const y = index * sectionHeight;
             
             combinedCtx.fillStyle = '#f0f0f0';
@@ -264,37 +564,52 @@ document.addEventListener("DOMContentLoaded", () => {
               sourceY = (img.naturalHeight - sourceHeight) / 2;
             }
 
-            // Áp dụng filter cho context trước khi vẽ
-            if (filterSelect.value) {
-              applyFilterToContext(combinedCtx, filterSelect.value);
-            }
-
             combinedCtx.drawImage(
               img,
               sourceX, sourceY, sourceWidth, sourceHeight,
               0, y, combinedCanvas.width, sectionHeight
             );
-
-            // Reset filter sau khi vẽ
-            combinedCtx.filter = 'none';
             
             resolve();
           };
-          img.src = photo.src;
+          img.onerror = (err) => {
+            console.error(`Error loading photo ${index + 1}:`, err);
+            resolve();
+          };
+          img.src = photoData;
         });
       });
 
-      Promise.all(loadPromises).then(() => {
-        if (frameImage) {
-          combinedCtx.drawImage(frameImage, 0, 0, combinedCanvas.width, combinedCanvas.height);
+      Promise.all(loadPromises).then(async () => {
+        // Áp dụng khung ảnh cho ảnh kết hợp
+        const selectedFrame = frameSelect.value;
+        if (selectedFrame) {
+          console.log('Applying frame to combined image');
+          const frameImg = new Image();
+          frameImg.onload = () => {
+            // Draw the frame on top of the combined image
+            combinedCtx.drawImage(frameImg, 0, 0, combinedCanvas.width, combinedCanvas.height);
+            console.log('Frame applied to combined image');
+            resolve();
+          };
+          frameImg.onerror = (err) => {
+            console.error('Error applying frame to combined image:', err);
+            resolve();
+          };
+          frameImg.src = selectedFrame;
+        } else {
+          console.log('No frame selected for combined image');
+          resolve();
         }
-        resolve();
       });
     });
   }
 
   // === Show download section ===
   function showDownloadCombined() {
+    // Xóa preview và hiển thị download section
+    photoStrip.innerHTML = '';
+
     const container = document.createElement('div');
     container.className = 'download-section';
 
@@ -323,149 +638,4 @@ document.addEventListener("DOMContentLoaded", () => {
     captureBtn.style.display = 'none';
     resetBtn.style.display = 'block';
   }
-
-  // === Frame selection handler ===
-  frameSelect.addEventListener('change', (e) => {
-    const path = e.target.value;
-    frameImage = path ? new Image() : null;
-    if (frameImage) {
-      frameImage.onload = () => console.log('Frame loaded successfully');
-      frameImage.onerror = (err) => {
-        console.error('Error loading frame:', err);
-        alert('Không thể tải khung ảnh: ' + err.message);
-      };
-      frameImage.src = path;
-    }
-  });
-
-  // === Photo capture sequence ===
-  function takePhotoSequence() {
-    if (isCapturing) return;
-    
-    isCapturing = true;
-    
-    // Vô hiệu hóa tất cả điều khiển
-    captureBtn.disabled = true;
-    captureBtn.style.opacity = '0.5';
-    captureBtn.style.cursor = 'not-allowed';
-    
-    resetBtn.disabled = true;
-    resetBtn.style.opacity = '0.5';
-    resetBtn.style.cursor = 'not-allowed';
-    
-    filterSelect.disabled = true;
-    filterSelect.style.opacity = '0.5';
-    filterSelect.style.cursor = 'not-allowed';
-    
-    frameSelect.disabled = true;
-    frameSelect.style.opacity = '0.5';
-    frameSelect.style.cursor = 'not-allowed';
-    
-    // Tạo preview container mới mỗi lần chụp
-    previewContainer = createPreviewContainer();
-    photoStrip.innerHTML = ''; // Xóa nội dung cũ
-    photoStrip.appendChild(previewContainer);
-    
-    capturedPhotos = [];
-    
-    const totalPhotos = 4;
-    let currentPhoto = 0;
-    
-    const captureNextPhoto = async () => {
-      if (currentPhoto < totalPhotos) {
-        await countdown(3);
-        showFlash();
-        
-        const img = capturePhoto();
-        capturedPhotos.push(img);
-        
-        addPhotoToPreview(previewContainer, img.src, currentPhoto);
-        currentPhoto++;
-        
-        if (currentPhoto < totalPhotos) {
-          captureNextPhoto();
-        } else {
-          isCapturing = false;
-          
-          // Kích hoạt lại tất cả điều khiển
-          captureBtn.disabled = false;
-          captureBtn.style.opacity = '1';
-          captureBtn.style.cursor = 'pointer';
-          
-          resetBtn.disabled = false;
-          resetBtn.style.opacity = '1';
-          resetBtn.style.cursor = 'pointer';
-          
-          filterSelect.disabled = false;
-          filterSelect.style.opacity = '1';
-          filterSelect.style.cursor = 'pointer';
-          
-          frameSelect.disabled = false;
-          frameSelect.style.opacity = '1';
-          frameSelect.style.cursor = 'pointer';
-          
-          await createCombinedImage();
-          showDownloadCombined();
-          
-          setTimeout(() => {
-            if (previewContainer) {
-              previewContainer.remove();
-              previewContainer = null;
-            }
-          }, 1000);
-        }
-      }
-    };
-
-    captureNextPhoto();
-  }
-
-  // === Event handlers ===
-  captureBtn.addEventListener('click', () => {
-    if (isCapturing) return;
-    console.log("Đã nhấn nút chụp ảnh");
-    takePhotoSequence();
-  });
-
-  resetBtn.addEventListener('click', () => {
-    if (isCapturing) return;
-    
-    photoStrip.innerHTML = '';
-    capturedPhotos = [];
-    if (previewContainer) {
-      previewContainer.remove();
-      previewContainer = null;
-    }
-    overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-    
-    // Kích hoạt lại tất cả điều khiển
-    captureBtn.disabled = false;
-    captureBtn.style.opacity = '1';
-    captureBtn.style.cursor = 'pointer';
-    
-    resetBtn.disabled = false;
-    resetBtn.style.opacity = '1';
-    resetBtn.style.cursor = 'pointer';
-    
-    filterSelect.disabled = false;
-    filterSelect.style.opacity = '1';
-    filterSelect.style.cursor = 'pointer';
-    
-    frameSelect.disabled = false;
-    frameSelect.style.opacity = '1';
-    frameSelect.style.cursor = 'pointer';
-    
-    // Hiện nút chụp ảnh và ẩn nút làm lại
-    captureBtn.style.display = 'block';
-    resetBtn.style.display = 'none';
-    
-    takePhotoSequence();
-  });
-
-  // === Initialize ===
-  startWebcam();
-  setupFilters();
-  
-  // Ẩn nút làm lại khi khởi động
-  resetBtn.style.display = 'none';
 });

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150" height="600" viewBox="0 0 150 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Winter frame with snowflake pattern -->
+  <defs>
+    <pattern id="snowflake" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M20,0 L20,8 M20,32 L20,40 M0,20 L8,20 M32,20 L40,20 M5,5 L11,11 M29,29 L35,35 M5,35 L11,29 M29,5 L35,11" 
+            stroke="#4682B4" stroke-width="1" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="150" height="600" fill="white" stroke="#4682B4" stroke-width="3"/>
+  <!-- Decorative border -->
+  <rect x="5" y="5" width="140" height="590" fill="none" stroke="url(#snowflake)" stroke-width="1"/>
+  <!-- Corner decorations -->
+  <path d="M0,0 L40,0 L40,3 L3,3 L3,40 L0,40 Z" fill="#4682B4"/>
+  <path d="M110,0 L150,0 L150,40 L147,40 L147,3 L110,3 Z" fill="#4682B4"/>
+  <path d="M0,560 L0,600 L40,600 L40,597 L3,597 L3,560 Z" fill="#4682B4"/>
+  <path d="M110,597 L110,600 L150,600 L150,560 L147,560 L147,597 Z" fill="#4682B4"/>
+</svg> 

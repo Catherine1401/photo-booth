@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150" height="600" viewBox="0 0 150 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Modern gradient frame -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90E2"/>
+      <stop offset="100%" style="stop-color:#9013FE"/>
+    </linearGradient>
+    <pattern id="lines" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="5" x2="10" y2="5" stroke="url(#gradient)" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="150" height="600" fill="white" stroke="url(#gradient)" stroke-width="3"/>
+  <!-- Decorative border -->
+  <rect x="5" y="5" width="140" height="590" fill="none" stroke="url(#lines)" stroke-width="1"/>
+  <!-- Corner decorations -->
+  <path d="M0,0 L40,0 L40,3 L3,3 L3,40 L0,40 Z" fill="url(#gradient)"/>
+  <path d="M110,0 L150,0 L150,40 L147,40 L147,3 L110,3 Z" fill="url(#gradient)"/>
+  <path d="M0,560 L0,600 L40,600 L40,597 L3,597 L3,560 Z" fill="url(#gradient)"/>
+  <path d="M110,597 L110,600 L150,600 L150,560 L147,560 L147,597 Z" fill="url(#gradient)"/>
+</svg> 

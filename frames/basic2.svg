@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150" height="600" viewBox="0 0 150 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Black frame with bold border -->
+  <rect x="0" y="0" width="150" height="600" fill="white" stroke="black" stroke-width="4"/>
+  <!-- Decorative corners -->
+  <path d="M0,0 L20,0 L20,4 L4,4 L4,20 L0,20 Z" fill="black"/>
+  <path d="M130,0 L150,0 L150,20 L146,20 L146,4 L130,4 Z" fill="black"/>
+  <path d="M0,580 L0,600 L20,600 L20,596 L4,596 L4,580 Z" fill="black"/>
+  <path d="M130,596 L130,600 L150,600 L150,580 L146,580 L146,596 Z" fill="black"/>
+</svg> 
