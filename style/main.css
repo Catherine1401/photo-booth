@@ -1,381 +1,276 @@
-/* === RESET === */
+/* Modern CSS Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
+:root {
+  --primary-color: #2196F3;
+  --success-color: #4CAF50;
+  --background-color: #f5f5f5;
+  --surface-color: #ffffff;
+  --text-color: #333333;
+  --border-radius: 12px;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
 }
 
 body {
-  font-family: 'Segoe UI', 'Roboto', sans-serif;
-  background: #f3f4f6;
-  color: #111827;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
   line-height: 1.6;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-/* === HEADER === */
+/* Header */
 header {
-  background-color: #ffffff;
-  padding: 1.5rem 2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  background-color: var(--surface-color);
+  padding: 1rem;
   text-align: center;
-  width: 100%;
+  box-shadow: var(--shadow);
+  margin-bottom: 1rem;
 }
 
 header h1 {
-  font-size: 2.2rem;
-  color: #2563eb;
-  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--primary-color);
 }
 
-/* === MAIN CONTAINER === */
+/* Main Container */
 .container {
-  flex: 1;
   width: 100%;
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 1rem;
-  display: flex;
-  flex-direction: row;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
   gap: 2rem;
-  align-items: flex-start;
-  justify-content: center;
-  flex-wrap: wrap;
 }
 
-/* === WEBCAM PREVIEW === */
+/* Webcam Box */
 .webcam-box {
   position: relative;
-  flex: 1;
-  max-width: 500px;
-  aspect-ratio: 4 / 3;
-  background-color: #e5e7eb;
-  border-radius: 1rem;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  min-width: 300px;
+  box-shadow: var(--shadow);
+  aspect-ratio: 4/3;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
-video {
-  position: absolute;
+#webcam {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  top: 0;
-  left: 0;
-  transform: scaleX(-1); /* Mirror effect */
 }
 
-canvas {
+#overlay {
   position: absolute;
-  width: 100%;
-  height: 100%;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
 }
 
-#countdown {
+/* Photo Strip */
+.photo-strip {
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  width: 100%;
+}
+
+.photo-container {
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.photo-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Controls */
+.controls {
+  width: 100%;
+  max-width: 700px;
+  margin: 1rem auto;
+  padding: 1rem;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.filter-control,
+.frame-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-control label,
+.frame-control label {
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+select {
+  padding: 0.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  background-color: var(--surface-color);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+select:hover {
+  border-color: var(--primary-color);
+}
+
+.button-control {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  flex: 1;
+}
+
+#capture-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+#capture-btn:hover {
+  background-color: #1976D2;
+}
+
+#reset-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+#reset-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Download Section */
+.download-section {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 300px;
+  margin: 0.75rem auto 0;
+}
+
+.download-section img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  margin: 0 auto 0.5rem;
+  display: block;
+}
+
+.button-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.button-container button {
+  flex: 1;
+}
+
+/* Countdown */
+.countdown {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 5rem;
+  font-size: 6rem;
+  font-weight: bold;
   color: white;
-  background: rgba(0, 0, 0, 0.75);
-  padding: 2rem 3rem;
-  border-radius: 50%;
-  z-index: 10;
-  animation: pop 0.3s ease;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes pop {
-  0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
-  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* === CONTROLS === */
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-  align-items: center;
+/* Flash Effect */
+.flash {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 1200px;
-  padding: 1rem;
-  background: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  margin: 1rem 0;
+  height: 100%;
+  background-color: white;
+  opacity: 0;
+  transition: opacity 0.1s;
+  pointer-events: none;
+  z-index: 1000;
 }
 
-.controls label {
-  font-weight: 600;
-  margin-right: 0.5rem;
-  color: #374151;
-  white-space: nowrap;
-}
-
-select,
-button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-select {
-  background: #ffffff;
-  border: 1px solid #d1d5db;
-  color: #111827;
-  min-width: 150px;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 0.7rem center;
-  background-size: 1em;
-  padding-right: 2.5rem;
-}
-
-select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-button {
-  background-color: #2563eb;
-  color: white;
-  font-weight: 500;
-  min-width: 120px;
-  user-select: none;
-}
-
-button:hover:not(:disabled) {
-  background-color: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-}
-
-button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-button:disabled {
-  background-color: #93c5fd;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-  opacity: 0.7;
-}
-
-#reset-btn {
-  background-color: #ef4444;
-}
-
-#reset-btn:hover:not(:disabled) {
-  background-color: #dc2626;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-}
-
-/* === PHOTOS (bên phải) === */
-.photo-strip {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 250px;
-  gap: 1rem;
-  padding: 1rem;
-  background: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  min-height: 200px;
-}
-
-.photo-strip .photo-container {
-  width: 100%;
-  text-align: center;
-  background: #f9fafb;
-  padding: 0.5rem;
-  border-radius: 0.75rem;
-}
-
-.photo-strip .photo-container img {
-  width: 100%;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.photo-strip .photo-container p {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin: 0;
-}
-
-/* === ẢNH GHÉP HOÀN CHỈNH === */
-.final-result {
-  width: 100%;
-  max-width: 250px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: center;
-  background: #f9fafb;
-  padding: 1rem;
-  border-radius: 0.75rem;
-}
-
-#final-canvas {
-  width: 100%;
-  height: auto;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-#download-final-btn {
-  background-color: #7c3aed;
-  width: 100%;
-}
-
-#download-final-btn:hover:not(:disabled) {
-  background-color: #6d28d9;
-}
-
-/* === FOOTER === */
-footer {
-  text-align: center;
-  padding: 1rem;
-  font-size: 0.9rem;
-  color: #6b7280;
-  width: 100%;
-  background: #ffffff;
-  margin-top: auto;
-}
-
-/* === RESPONSIVE === */
+/* Responsive Design */
 @media (max-width: 768px) {
   .container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .webcam-box {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .photo-strip {
-    width: 100%;
-    max-width: 500px;
+    grid-template-columns: 1fr;
+    padding: 0 0.5rem;
   }
 
   .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .button-control {
     flex-direction: column;
-    align-items: stretch;
-  }
-
-  select, button {
-    width: 100%;
   }
 }
 
-/* === Filter Controls === */
-.filter-control {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex: 1;
-  min-width: 200px;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.filter-control select {
-  flex: 1;
-  min-width: 150px;
-  max-width: 300px;
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
 }
 
-/* === Filter Effects === */
-.filter-grayscale { filter: grayscale(100%); }
-.filter-sepia { filter: sepia(100%); }
-.filter-contrast { filter: contrast(150%); }
-.filter-blur { filter: blur(2px); }
-.filter-bright { filter: brightness(120%); }
-.filter-vibrant { filter: saturate(200%); }
-.filter-retro { filter: hue-rotate(90deg); }
-.filter-negative { filter: invert(100%); }
-.filter-dramatic { filter: contrast(200%) brightness(150%); }
-.filter-vintage { filter: saturate(150%) contrast(120%); }
-.filter-oldfilm { filter: sepia(50%) contrast(120%) brightness(90%); }
-.filter-neon { filter: hue-rotate(180deg) saturate(150%); }
-.filter-noir { filter: grayscale(50%) sepia(50%); }
-.filter-instagram { filter: brightness(110%) contrast(110%) saturate(150%); }
-.filter-portrait { filter: contrast(120%) saturate(120%) brightness(110%); }
-.filter-modern { filter: brightness(105%) contrast(110%) saturate(130%) hue-rotate(5deg); }
-.filter-summer { filter: brightness(110%) contrast(120%) saturate(140%) hue-rotate(-10deg); }
-.filter-autumn { filter: brightness(95%) contrast(110%) saturate(90%) hue-rotate(15deg); }
-.filter-winter { filter: brightness(90%) contrast(120%) saturate(80%) hue-rotate(30deg); }
-.filter-spring { filter: brightness(105%) contrast(115%) saturate(120%) hue-rotate(-5deg); }
-.filter-cyberpunk { filter: brightness(110%) contrast(130%) saturate(150%) hue-rotate(180deg); }
-.filter-sunset { filter: brightness(105%) contrast(120%) saturate(110%) hue-rotate(45deg); }
-.filter-moody { filter: brightness(95%) contrast(110%) saturate(90%) hue-rotate(-15deg); }
-.filter-popart { filter: brightness(110%) contrast(125%) saturate(140%) hue-rotate(10deg); }
-.filter-pastel { filter: brightness(105%) contrast(115%) saturate(130%) hue-rotate(-20deg); }
-.filter-cinematic { filter: brightness(100%) contrast(140%) saturate(120%) hue-rotate(0deg); }
-.filter-tropical { filter: brightness(110%) contrast(120%) saturate(150%) hue-rotate(30deg); }
-.filter-nordic { filter: brightness(95%) contrast(130%) saturate(110%) hue-rotate(-30deg); }
-.filter-vibrant { filter: brightness(105%) contrast(125%) saturate(140%) hue-rotate(15deg); }
-.filter-natural { filter: brightness(100%) contrast(120%) saturate(130%) hue-rotate(-10deg); }
-.filter-fashion { filter: brightness(110%) contrast(130%) saturate(160%) hue-rotate(20deg); }
-.filter-minimal { filter: brightness(105%) contrast(115%) saturate(120%) hue-rotate(-5deg); }
-.filter-urban { filter: brightness(100%) contrast(125%) saturate(140%) hue-rotate(10deg); }
-.filter-lifestyle { filter: brightness(110%) contrast(120%) saturate(150%) hue-rotate(-15deg); }
-.filter-editorial { filter: brightness(105%) contrast(130%) saturate(140%) hue-rotate(5deg); }
-
-/* === Filter Transitions === */
-#webcam,
-.photo-container img {
-  transition: filter 0.3s ease;
-}
-
-/* === Filter Selection Styles === */
-#filter-select option {
-  padding: 8px;
-  font-size: 14px;
-}
-
-#filter-select option:hover {
-  background-color: #f3f4f6;
-}
-
-/* === Responsive Filter Adjustments === */
-@media (max-width: 768px) {
-  .filter-control {
-    width: 100%;
-  }
-  
-  .filter-control select {
-    max-width: none;
-  }
+/* Hidden Class */
+.hidden {
+  display: none !important;
 }
