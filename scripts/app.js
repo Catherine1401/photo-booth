@@ -784,7 +784,7 @@ let previewContainer = null;
 let loadingSpinner = null;
 let countdownTimeSelect;
 let flashDurationSelect;
-let isFlipped = false;
+let isFlipped = true;
 
 // === State ===
 let filterValue = 'none';
@@ -940,10 +940,42 @@ async function startWebcam() {
     
     webcam.srcObject = stream;
 
+    // Khởi tạo MediaRecorder
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'video/webm;codecs=vp9'
+    });
+
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+      }
+    };
+
+    mediaRecorder.onstop = () => {
+      const videoBlob = new Blob(recordedChunks, {
+        type: 'video/webm'
+      });
+      const videoUrl = URL.createObjectURL(videoBlob);
+      
+      // Enable nút tải video
+      const downloadBtn = document.getElementById('download-video-btn');
+      downloadBtn.disabled = false;
+      
+      // Thêm sự kiện cho nút tải video
+      downloadBtn.onclick = () => {
+        const a = document.createElement('a');
+        a.href = videoUrl;
+        a.download = 'photo-booth-session.webm';
+        a.click();
+      };
+    };
+
     await new Promise((resolve) => {
       webcam.onloadedmetadata = () => {
         console.log('Webcam loaded:', webcam.videoWidth, 'x', webcam.videoHeight);
         captureBtn.disabled = false;
+        // Áp dụng lật camera mặc định
+        webcam.style.transform = 'scaleX(-1)';
         resolve();
       };
     });
@@ -965,6 +997,10 @@ async function takePhotoSequence() {
     isCapturing = true;
     setUIState(true);
     
+    // Bắt đầu quay video
+    recordedChunks = [];
+    mediaRecorder.start();
+    
     // Clear existing preview and create new one
     if (previewContainer) {
       previewContainer.remove();
@@ -982,42 +1018,32 @@ async function takePhotoSequence() {
       downloadBtn.remove();
     }
     
-    // Lấy thời gian đếm ngược từ select
     const countdownTime = parseInt(countdownTimeSelect.value);
-    
-    // Đếm ngược lần đầu
     await countdown(countdownTime);
     
     for (let i = 0; i < 4; i++) {
-      // Điều chỉnh độ sáng của webcam trước khi chụp
       adjustWebcamBrightness();
       showFlash();
       
-      // Capture photo with current filter
       const photo = capturePhoto();
-      
-      // Create PhotoData with current settings
       const photoData = new PhotoData(
         photo,
         filterSelect.value,
         frameSelect.value
       );
       
-      // Get framed image
       const framedPhoto = await photoData.getFramedImage();
-      
-      // Store original photo data
       capturedPhotos.push(photoData);
-      
-      // Add to new preview
       addPhotoToPreview(previewContainer, framedPhoto, capturedPhotos.length - 1);
 
       if (i < 3) {
-        // Sử dụng cùng thời gian đếm ngược cho các lần chụp tiếp theo
         await countdown(countdownTime);
       }
     }
 
+    // Dừng quay video
+    mediaRecorder.stop();
+    
     addDownloadButton();
     
   } catch (error) {
@@ -1529,10 +1555,16 @@ function setUIState(isCapturing) {
   const flipBtn = document.getElementById('flip-btn');
   flipBtn.disabled = isCapturing;
   flipBtn.classList.toggle('disabled', isCapturing);
+
+  // Disable download video button when starting new capture
+  if (isCapturing) {
+    const downloadBtn = document.getElementById('download-video-btn');
+    downloadBtn.disabled = true;
+  }
   
   // Update button text and style
   if (isCapturing) {
-    captureBtn.textContent = 'Taking Photos...';
+    captureBtn.textContent = 'Đang chụp...';
     captureBtn.style.backgroundColor = '#666';
     captureBtn.style.cursor = 'not-allowed';
   } else {

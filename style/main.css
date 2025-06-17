@@ -27,11 +27,13 @@ body {
 header {
   text-align: center;
   margin-bottom: 30px;
+  animation: slideIn 0.5s ease-out;
 }
 
 header h1 {
   color: #1a1a1a;
   font-size: 2.5rem;
+  animation: pulse 2s infinite;
 }
 
 /* Main Container */
@@ -41,6 +43,7 @@ header h1 {
   display: flex;
   gap: 30px;
   align-items: flex-start;
+  animation: fadeIn 0.5s ease-out;
 }
 
 /* Webcam Section */
@@ -57,6 +60,7 @@ header h1 {
   background: #000;
   border-radius: 10px;
   overflow: hidden;
+  animation: scaleIn 0.5s ease-out;
 }
 
 .webcam-box video {
@@ -129,6 +133,8 @@ header h1 {
   cursor: pointer;
   transition: background 0.3s ease;
   z-index: 10;
+  position: relative;
+  overflow: hidden;
 }
 
 .download-btn:hover {
@@ -139,19 +145,45 @@ header h1 {
   margin-right: 5px;
 }
 
+.download-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.download-btn:hover::after {
+  left: 100%;
+}
+
 /* Controls */
 .controls {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-top: 20px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.5s ease-out 0.2s backwards;
 }
 
 .filter-control,
-.frame-control {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+.frame-control,
+.timing-control {
+  width: 100%;
 }
 
 label {
@@ -197,57 +229,71 @@ label {
 .button-control {
   display: flex;
   flex-direction: row;
+  flex-wrap: nowrap;
   gap: 10px;
-  margin-top: 15px;
-  width: 100%;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  margin-top: 10px;
 }
 
 .button-control button {
-  flex: 0 1 auto;
-  padding: 8px 16px;
-  font-size: 14px;
-  border-radius: 6px;
+  flex: 1;
+  min-width: 120px;
+  max-width: 200px;
+  height: 40px;
+  padding: 0 15px;
   border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 100px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-  vertical-align: middle;
-}
-
-#capture-btn {
+  border-radius: 5px;
   background-color: #007BFF;
   color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  overflow: hidden;
 }
 
-#flip-btn {
-  background-color: #6c757d;
-  color: white;
+.button-control button.download-btn {
+  flex: 1;
+  min-width: 120px;
+  max-width: 200px;
+  background-color: #28a745;
 }
 
-.button-control button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+.button-control button.download-btn:hover {
+  background-color: #218838;
 }
 
-.button-control button:active {
-  transform: translateY(0);
-}
-
-.button-control button:disabled {
+.button-control button.download-btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .controls {
+    padding: 10px;
+    animation: slideIn 0.5s ease-out;
+  }
+
+  .button-control {
+    gap: 8px;
+  }
+  
+  .button-control button {
+    min-width: 100px;
+    height: 36px;
+    font-size: 13px;
+    padding: 0 10px;
+    transition: all 0.2s ease;
+  }
+  
+  .button-control button:hover {
+    transform: translateY(-1px);
+  }
 }
 
 /* Countdown */
@@ -272,9 +318,9 @@ label {
 }
 
 @keyframes pulse {
-  0% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.1); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 @keyframes glow {
@@ -333,7 +379,7 @@ label {
 @media (max-width: 480px) {
   .button-control {
     flex-direction: row;
-    justify-content: center;
+    flex-wrap: nowrap;
   }
   
   .button-control button {
@@ -348,50 +394,32 @@ label {
   to { opacity: 1; }
 }
 
-@keyframes slideUp {
-  from { 
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes scaleIn {
-  from { 
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to { 
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 @keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
-  }
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes flash {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* Apply animations */
@@ -822,4 +850,245 @@ label {
 /* Add transition for webcam flip */
 #webcam {
   transition: transform 0.3s ease;
+}
+
+.video-control {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.download-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.download-btn:active {
+  transform: translateY(0);
+}
+
+/* Animation cho container chính */
+.container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Animation cho header */
+header {
+  animation: slideIn 0.5s ease-out;
+}
+
+header h1 {
+  animation: pulse 2s infinite;
+}
+
+/* Animation cho webcam container */
+.webcam-container {
+  animation: scaleIn 0.5s ease-out;
+}
+
+/* Animation cho controls */
+.controls {
+  animation: slideIn 0.5s ease-out 0.2s backwards;
+}
+
+/* Animation cho các control groups */
+.control-group {
+  animation: fadeIn 0.5s ease-out;
+  transition: transform 0.3s ease;
+}
+
+.control-group:hover {
+  transform: translateY(-2px);
+}
+
+/* Animation cho buttons */
+.button-control button {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.button-control button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button-control button:active {
+  transform: translateY(0);
+}
+
+/* Animation cho switch */
+.switch-container {
+  transition: all 0.3s ease;
+}
+
+.switch-container:hover {
+  transform: scale(1.05);
+}
+
+/* Animation cho select */
+select {
+  transition: all 0.3s ease;
+}
+
+select:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation cho preview container */
+.preview-container {
+  animation: scaleIn 0.5s ease-out;
+}
+
+.preview-container img {
+  transition: all 0.3s ease;
+}
+
+.preview-container img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation cho loading spinner */
+.loading-spinner {
+  animation: pulse 1.5s infinite;
+}
+
+/* Animation cho flash effect */
+.flash {
+  animation: flash 0.3s ease-out;
+}
+
+/* Animation cho countdown */
+.countdown {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Animation cho disabled state */
+button:disabled {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Animation cho download button */
+.download-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.download-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.download-btn:hover::after {
+  left: 100%;
+}
+
+/* Animation cho filter effects */
+.filter-grayscale,
+.filter-sepia,
+.filter-invert {
+  transition: all 0.3s ease;
+}
+
+/* Animation cho frame effects */
+.frame-polaroid,
+.frame-vintage,
+.frame-modern {
+  transition: all 0.3s ease;
+}
+
+/* Animation cho error messages */
+.error-message {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Animation cho success messages */
+.success-message {
+  animation: scaleIn 0.5s ease-out;
+}
+
+/* Animation cho tooltips */
+.tooltip {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Animation cho modal */
+.modal {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Animation cho notifications */
+.notification {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Animation cho progress bar */
+.progress-bar {
+  animation: pulse 2s infinite;
+}
+
+/* Animation cho hover effects */
+.hover-effect {
+  transition: all 0.3s ease;
+}
+
+.hover-effect:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation cho focus states */
+button:focus,
+select:focus {
+  animation: pulse 1s infinite;
+  outline: none;
+}
+
+/* Animation cho active states */
+button:active {
+  animation: scaleIn 0.2s ease-out;
+}
+
+/* Animation cho disabled states */
+button:disabled {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Animation cho loading states */
+.loading {
+  animation: pulse 1.5s infinite;
+}
+
+/* Animation cho success states */
+.success {
+  animation: scaleIn 0.5s ease-out;
+}
+
+/* Animation cho error states */
+.error {
+  animation: shake 0.5s ease-in-out;
 }
