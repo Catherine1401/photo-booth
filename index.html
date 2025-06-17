@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
@@ -18,18 +18,17 @@
     <section class="webcam-section">
       <div class="webcam-box">
         <video id="webcam" autoplay playsinline></video>
-        <canvas id="overlay"></canvas>
         <div id="countdown" class="countdown hidden"></div>
       </div>
 
       <div class="controls">
         <div class="filter-control">
-          <label for="filter-select">Bộ lọc</label>
+          <label for="filter-select">Filter</label>
           <select id="filter-select" class="control-select">
-            <option value="normal">Bình thường</option>
-            <option value="grayscale">Đen trắng</option>
+            <option value="normal">Normal</option>
+            <option value="grayscale">Grayscale</option>
             <option value="sepia">Sepia</option>
-            <option value="invert">Đảo màu</option>
+            <option value="invert">Invert</option>
             
             <optgroup label="Instagram">
               <option value="clarendon">Clarendon</option>
@@ -87,36 +86,18 @@
         </div>
 
         <div class="frame-control">
-          <label for="frame-select">Khung ảnh</label>
+          <label for="frame-select">Frame</label>
           <select id="frame-select" class="control-select">
-            <option value="">Không có</option>
-            <optgroup label="Khung cơ bản">
-              <option value="frames/basic1.svg">Khung trắng</option>
-              <option value="frames/basic2.svg">Khung đen</option>
-              <option value="frames/basic3.svg">Khung xám</option>
-            </optgroup>
-            <optgroup label="Khung nghệ thuật">
-              <option value="frames/art1.svg">Khung nghệ thuật 1</option>
-              <option value="frames/art2.svg">Khung nghệ thuật 2</option>
-              <option value="frames/art3.svg">Khung nghệ thuật 3</option>
-            </optgroup>
-            <optgroup label="Khung theo mùa">
-              <option value="frames/season1.svg">Khung mùa hè</option>
-              <option value="frames/season2.svg">Khung mùa thu</option>
-              <option value="frames/season3.svg">Khung mùa đông</option>
-              <option value="frames/season4.svg">Khung mùa xuân</option>
-            </optgroup>
-            <optgroup label="Khung đặc biệt">
-              <option value="frames/special1.svg">Khung đặc biệt 1</option>
-              <option value="frames/special2.svg">Khung đặc biệt 2</option>
-              <option value="frames/special3.svg">Khung đặc biệt 3</option>
-            </optgroup>
+            <option value="">No Frame</option>
+            <option value="frames/frame1.png">Frame 1</option>
+            <option value="frames/frame2.png">Frame 2</option>
+            <option value="frames/frame3.png">Frame 3</option>
           </select>
         </div>
 
         <div class="button-control">
-          <button id="capture-btn" disabled>📸 Chụp Ảnh</button>
-          <button id="reset-btn">🔄 Làm Lại</button>
+          <button id="capture-btn" disabled>Take Photo</button>
+          <button id="reset-btn">Reset</button>
         </div>
       </div>
     </section>
@@ -126,7 +107,7 @@
     </section>
   </main>
 
-  <script src="./scripts/app.js"></script>
+  <script src="scripts/app.js"></script>
 </body>
 
 </html>

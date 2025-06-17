@@ -52,17 +52,17 @@ header h1 {
 .webcam-box {
   position: relative;
   width: 100%;
-  aspect-ratio: 4/3;
+  max-width: 480px;
+  margin: 0 auto;
   background: #000;
-  border-radius: 15px;
+  border-radius: 10px;
   overflow: hidden;
-  margin-bottom: 20px;
 }
 
-#webcam {
+.webcam-box video {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  display: block;
 }
 
 #overlay {
@@ -77,63 +77,78 @@ header h1 {
 /* Photo Strip */
 .photo-strip {
   flex: 1;
-  max-width: 400px;
+  max-width: 300px;
   background: white;
-  padding: 20px;
-  border-radius: 15px;
+  padding: 15px;
+  border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
+  height: 70vh;
+  overflow-y: auto;
 }
 
 .photo-container {
-  position: relative;
   width: 100%;
-  aspect-ratio: 3/4;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .photo-wrapper {
   position: relative;
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 150px;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.photo-wrapper img:not(.frame) {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.photo-wrapper .frame {
+.photo-wrapper img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  z-index: 1;
+  object-fit: cover;
+}
+
+.download-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 8px 15px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  z-index: 10;
+}
+
+.download-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.download-btn i {
+  margin-right: 5px;
 }
 
 /* Controls */
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
+  margin-top: 20px;
 }
 
 .filter-control,
 .frame-control {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
 }
 
 label {
@@ -142,23 +157,10 @@ label {
 }
 
 .control-select {
-  padding: 10px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
   background: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.control-select:hover {
-  border-color: #4CAF50;
-}
-
-.control-select:focus {
-  outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
 
 .button-control {
@@ -167,26 +169,30 @@ label {
 }
 
 button {
-  flex: 1;
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 8px;
-  background: #4CAF50;
+  border-radius: 5px;
+  background: #007bff;
   color: white;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 button:hover {
-  background: #45a049;
-  transform: translateY(-2px);
+  background: #0056b3;
 }
 
 button:disabled {
-  background: #cccccc;
+  background: #ccc;
   cursor: not-allowed;
-  transform: none;
+}
+
+#reset-btn {
+  background: #dc3545;
+}
+
+#reset-btn:hover {
+  background: #c82333;
 }
 
 /* Countdown */
@@ -196,12 +202,17 @@ button:disabled {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 120px;
+  font-weight: bold;
   color: white;
-  text-shadow: 0 0 20px rgba(0,0,0,0.5);
+  text-shadow: 0 0 10px rgba(0,0,0,0.5);
+  z-index: 1000;
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .countdown.hidden {
-  display: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Flash Effect */
@@ -211,9 +222,9 @@ button:disabled {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: white;
+  background: white;
   opacity: 0;
-  transition: opacity 0.1s;
+  transition: opacity 0.1s ease-in-out;
   pointer-events: none;
   z-index: 1000;
 }
@@ -474,3 +485,34 @@ button:disabled {
 .filter-minimal { filter: contrast(110%) brightness(110%) saturate(90%); }
 .filter-urban { filter: contrast(120%) brightness(90%) saturate(110%); }
 .filter-lifestyle { filter: contrast(110%) brightness(110%) saturate(120%); }
+
+.download-all-btn {
+  position: sticky;
+  bottom: 0;
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  z-index: 10;
+}
+
+.download-all-btn:hover {
+  background: #1976D2;
+}
+
+.download-all-btn i {
+  margin-right: 8px;
+}
+
+.download-all-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
