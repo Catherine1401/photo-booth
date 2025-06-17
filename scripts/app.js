@@ -940,36 +940,6 @@ async function startWebcam() {
     
     webcam.srcObject = stream;
 
-    // Khởi tạo MediaRecorder
-    mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'video/webm;codecs=vp9'
-    });
-
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        recordedChunks.push(event.data);
-      }
-    };
-
-    mediaRecorder.onstop = () => {
-      const videoBlob = new Blob(recordedChunks, {
-        type: 'video/webm'
-      });
-      const videoUrl = URL.createObjectURL(videoBlob);
-      
-      // Enable nút tải video
-      const downloadBtn = document.getElementById('download-video-btn');
-      downloadBtn.disabled = false;
-      
-      // Thêm sự kiện cho nút tải video
-      downloadBtn.onclick = () => {
-        const a = document.createElement('a');
-        a.href = videoUrl;
-        a.download = 'photo-booth-session.webm';
-        a.click();
-      };
-    };
-
     await new Promise((resolve) => {
       webcam.onloadedmetadata = () => {
         console.log('Webcam loaded:', webcam.videoWidth, 'x', webcam.videoHeight);
@@ -996,10 +966,6 @@ async function takePhotoSequence() {
   try {
     isCapturing = true;
     setUIState(true);
-    
-    // Bắt đầu quay video
-    recordedChunks = [];
-    mediaRecorder.start();
     
     // Clear existing preview and create new one
     if (previewContainer) {
@@ -1040,9 +1006,6 @@ async function takePhotoSequence() {
         await countdown(countdownTime);
       }
     }
-
-    // Dừng quay video
-    mediaRecorder.stop();
     
     addDownloadButton();
     
@@ -1248,17 +1211,39 @@ function showFlash() {
 
 async function countdown(seconds) {
   return new Promise((resolve) => {
-    countdownEl.textContent = seconds;
+    let count = seconds;
+    const countdownEl = document.getElementById('countdown');
     countdownEl.classList.remove('hidden');
     
+    // Tạo vòng tròn
+    const circle = document.createElement('div');
+    circle.className = 'countdown-circle';
+    countdownEl.appendChild(circle);
+    
+    // Tạo số đếm
+    const number = document.createElement('div');
+    number.className = 'countdown-number';
+    countdownEl.appendChild(number);
+    
+    // Hiển thị số đầu tiên
+    number.textContent = count;
+    number.classList.add('countdown-number');
+    
     const interval = setInterval(() => {
-      seconds--;
-      countdownEl.textContent = seconds;
-      
-      if (seconds === 0) {
-        // Hiển thị số 0 trong 1 giây trước khi ẩn
+      if (count > 0) {
+        count--;
+        // Cập nhật số mới
+        number.textContent = count;
+        
+        // Thêm animation mới
+        number.classList.remove('countdown-number');
+        void number.offsetWidth; // Trigger reflow
+        number.classList.add('countdown-number');
+      } else {
+        // Xóa các phần tử animation
         setTimeout(() => {
           countdownEl.classList.add('hidden');
+          countdownEl.innerHTML = '';
           resolve();
         }, 1000);
         clearInterval(interval);
@@ -1555,16 +1540,10 @@ function setUIState(isCapturing) {
   const flipBtn = document.getElementById('flip-btn');
   flipBtn.disabled = isCapturing;
   flipBtn.classList.toggle('disabled', isCapturing);
-
-  // Disable download video button when starting new capture
-  if (isCapturing) {
-    const downloadBtn = document.getElementById('download-video-btn');
-    downloadBtn.disabled = true;
-  }
   
   // Update button text and style
   if (isCapturing) {
-    captureBtn.textContent = 'Đang chụp...';
+    captureBtn.textContent = 'Taking Photo...';
     captureBtn.style.backgroundColor = '#666';
     captureBtn.style.cursor = 'not-allowed';
   } else {
