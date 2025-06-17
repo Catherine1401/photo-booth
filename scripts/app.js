@@ -784,6 +784,7 @@ let previewContainer = null;
 let loadingSpinner = null;
 let countdownTimeSelect;
 let flashDurationSelect;
+let isFlipped = false;
 
 // === State ===
 let filterValue = 'none';
@@ -840,6 +841,7 @@ function initializeElements() {
     photoStrip = document.getElementById('photo-strip');
     countdownTimeSelect = document.getElementById('countdown-time');
     flashDurationSelect = document.getElementById('flash-duration');
+    const flipBtn = document.getElementById('flip-btn');
 
     const elements = {
       webcam,
@@ -849,7 +851,8 @@ function initializeElements() {
       captureBtn,
       photoStrip,
       countdownTimeSelect,
-      flashDurationSelect
+      flashDurationSelect,
+      flipBtn
     };
 
     for (const [name, element] of Object.entries(elements)) {
@@ -902,6 +905,25 @@ function setupEventListeners() {
   
   captureBtn.addEventListener('mouseleave', () => {
     captureBtn.classList.remove('hover');
+  });
+
+  // Add flip button event listener
+  const flipBtn = document.getElementById('flip-btn');
+  flipBtn.addEventListener('click', () => {
+    if (isCapturing) return;
+    isFlipped = !isFlipped;
+    webcam.style.transform = isFlipped ? 'scaleX(-1)' : 'scaleX(1)';
+  });
+
+  // Add flash duration switch event listener
+  const flashDuration = document.getElementById('flash-duration');
+  flashDuration.checked = true; // Set default to high brightness
+  flashDuration.addEventListener('change', (e) => {
+    if (isCapturing) {
+      e.preventDefault();
+      e.target.checked = !e.target.checked;
+      return;
+    }
   });
 }
 
@@ -1010,6 +1032,13 @@ function capturePhoto() {
   canvas.height = webcam.videoHeight;
   
   applyFilterToContext(context, filterSelect.value);
+  
+  // Handle flipped image capture
+  if (isFlipped) {
+    context.translate(canvas.width, 0);
+    context.scale(-1, 1);
+  }
+  
   context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
   
   return canvas.toDataURL('image/png');
@@ -1163,11 +1192,17 @@ async function applyFrameToPhoto(photoData, frameType) {
 
 // === UI Effects ===
 function showFlash() {
+  if (isCapturing) return;
+  const flashDuration = document.getElementById('flash-duration');
+  // Chỉ tạo flash khi switch được bật
+  if (!flashDuration.checked) return;
+  
   const flash = document.createElement('div');
   flash.className = 'flash';
   document.querySelector('.webcam-box').appendChild(flash);
   
-  const duration = parseInt(flashDurationSelect.value) / 100;
+  // Sử dụng độ sáng cao khi switch bật
+  const duration = 1;
   
   requestAnimationFrame(() => {
     flash.style.opacity = duration.toString();
@@ -1474,14 +1509,28 @@ function setUIState(isCapturing) {
   frameSelect.disabled = isCapturing;
   frameSelect.classList.toggle('disabled', isCapturing);
   
+  // Disable/Enable countdown time select
+  countdownTimeSelect.disabled = isCapturing;
+  countdownTimeSelect.classList.toggle('disabled', isCapturing);
+  
+  // Disable/Enable flash duration switch
+  const flashDuration = document.getElementById('flash-duration');
+  flashDuration.disabled = isCapturing;
+  flashDuration.parentElement.classList.toggle('disabled', isCapturing);
+  
+  // Disable/Enable flip button
+  const flipBtn = document.getElementById('flip-btn');
+  flipBtn.disabled = isCapturing;
+  flipBtn.classList.toggle('disabled', isCapturing);
+  
   // Update button text and style
   if (isCapturing) {
     captureBtn.textContent = 'Đang chụp...';
     captureBtn.style.backgroundColor = '#666';
     captureBtn.style.cursor = 'not-allowed';
   } else {
-    captureBtn.textContent = 'Chụp ảnh';
-    captureBtn.style.backgroundColor = '#4CAF50';
+    captureBtn.textContent = 'Take Photo';
+    captureBtn.style.backgroundColor = '#007BFF';
     captureBtn.style.cursor = 'pointer';
   }
   
@@ -1492,3 +1541,50 @@ function setUIState(isCapturing) {
     hideLoading();
   }
 }
+
+// Sửa lại hàm adjustWebcamBrightness
+function adjustWebcamBrightness() {
+  if (isCapturing) return;
+  const flashDuration = document.getElementById('flash-duration');
+  if (flashDuration.checked) {
+    // Tăng độ sáng của webcam
+    webcam.style.filter = 'brightness(1.5)';
+    setTimeout(() => {
+      webcam.style.filter = 'brightness(1)';
+    }, 100);
+  }
+}
+
+// Thêm CSS để vô hiệu hóa hoàn toàn các controls
+const style = document.createElement('style');
+style.textContent = `
+  .disabled {
+    opacity: 0.6;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    user-select: none;
+  }
+
+  .switch.disabled {
+    opacity: 0.6;
+    pointer-events: none !important;
+  }
+
+  .switch.disabled .switch-slider {
+    cursor: not-allowed;
+    pointer-events: none !important;
+  }
+
+  .control-select:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    pointer-events: none !important;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none !important;
+  }
+`;
+document.head.appendChild(style);

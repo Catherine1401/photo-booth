@@ -105,24 +105,20 @@
           </select>
           
           <label for="flash-duration">Flash Brightness</label>
-          <select id="flash-duration" class="control-select">
-            <option value="50">Low</option>
-            <option value="80" selected>Medium</option>
-            <option value="100">High</option>
-          </select>
-
-          <label for="photo-count">Number of Photos</label>
-          <select id="photo-count" class="control-select">
-            <option value="2">2 photos</option>
-            <option value="4" selected>4 photos</option>
-            <option value="6">6 photos</option>
-            <option value="8">8 photos</option>
-          </select>
+          <div class="switch-control">
+            <label class="switch">
+              <input type="checkbox" id="flash-duration" checked>
+              <span class="switch-slider">
+                <span class="switch-on">High</span>
+                <span class="switch-off">Low</span>
+              </span>
+            </label>
+          </div>
         </div>
 
         <div class="button-control">
           <button id="capture-btn" disabled>Take Photo</button>
-          <button id="reset-btn">Reset</button>
+          <button id="flip-btn">Flip Camera</button>
         </div>
       </div>
     </section>
