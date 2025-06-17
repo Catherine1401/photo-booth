@@ -95,6 +95,31 @@
           </select>
         </div>
 
+        <div class="timing-control">
+          <label for="countdown-time">Thời gian đếm ngược (giây)</label>
+          <select id="countdown-time" class="control-select">
+            <option value="1">1 giây</option>
+            <option value="2">2 giây</option>
+            <option value="3" selected>3 giây</option>
+            <option value="5">5 giây</option>
+          </select>
+          
+          <label for="flash-duration">Độ sáng flash</label>
+          <select id="flash-duration" class="control-select">
+            <option value="50">Yếu</option>
+            <option value="80" selected>Vừa</option>
+            <option value="100">Mạnh</option>
+          </select>
+
+          <label for="photo-count">Số lượng ảnh</label>
+          <select id="photo-count" class="control-select">
+            <option value="2">2 ảnh</option>
+            <option value="4" selected>4 ảnh</option>
+            <option value="6">6 ảnh</option>
+            <option value="8">8 ảnh</option>
+          </select>
+        </div>
+
         <div class="button-control">
           <button id="capture-btn" disabled>Take Photo</button>
           <button id="reset-btn">Reset</button>

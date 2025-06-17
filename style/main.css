@@ -94,6 +94,7 @@ header h1 {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  animation: scaleIn 0.5s ease-out;
 }
 
 .photo-wrapper {
@@ -103,6 +104,8 @@ header h1 {
   background: #000;
   border-radius: 10px;
   overflow: hidden;
+  animation: slideUp 0.5s ease-out;
+  animation-fill-mode: both;
 }
 
 .photo-wrapper img {
@@ -161,6 +164,34 @@ label {
   border-radius: 5px;
   border: 1px solid #ddd;
   background: white;
+  transition: all 0.3s ease;
+}
+
+.control-select:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.control-select:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.control-select optgroup {
+  font-weight: bold;
+  color: #2196F3;
+  background-color: #f5f5f5;
+}
+
+.control-select option {
+  padding: 8px;
+  font-weight: normal;
+  color: #333;
+}
+
+.control-select option:hover {
+  background-color: #e3f2fd;
 }
 
 .button-control {
@@ -201,18 +232,37 @@ button:disabled {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 120px;
+  font-size: 8rem;
   font-weight: bold;
   color: white;
-  text-shadow: 0 0 10px rgba(0,0,0,0.5);
-  z-index: 1000;
-  opacity: 0.8;
-  transition: opacity 0.3s ease-in-out;
+  text-shadow: 0 0 20px rgba(0,0,0,0.5);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: scaleIn 0.3s ease-out;
 }
 
-.countdown.hidden {
-  opacity: 0;
-  pointer-events: none;
+.countdown:not(.hidden) {
+  opacity: 1;
+  animation: pulse 1s infinite, glow 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+  }
 }
 
 /* Flash Effect */
@@ -224,9 +274,10 @@ button:disabled {
   height: 100%;
   background: white;
   opacity: 0;
-  transition: opacity 0.1s ease-in-out;
+  transition: opacity 0.1s ease;
   pointer-events: none;
-  z-index: 1000;
+  z-index: 100;
+  animation: fadeIn 0.1s ease-out;
 }
 
 /* Responsive Design */
@@ -249,8 +300,152 @@ button:disabled {
   to { opacity: 1; }
 }
 
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Apply animations */
 .fade-in {
   animation: fadeIn 0.3s ease-in;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+.scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.bounce {
+  animation: bounce 1s ease infinite;
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Photo container animations */
+.photo-container {
+  animation: scaleIn 0.5s ease-out;
+}
+
+.photo-wrapper {
+  animation: slideUp 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.photo-wrapper:nth-child(1) { animation-delay: 0.1s; }
+.photo-wrapper:nth-child(2) { animation-delay: 0.2s; }
+.photo-wrapper:nth-child(3) { animation-delay: 0.3s; }
+.photo-wrapper:nth-child(4) { animation-delay: 0.4s; }
+
+/* Button animations */
+#capture-btn {
+  transition: all 0.3s ease;
+}
+
+#capture-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+#capture-btn:active {
+  transform: scale(0.95);
+}
+
+/* Control select animations */
+.control-select {
+  transition: all 0.3s ease;
+}
+
+.control-select:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Download button animations */
+.download-all-btn {
+  transition: all 0.3s ease;
+}
+
+.download-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.download-all-btn:active {
+  transform: translateY(0);
+}
+
+/* Flash effect enhancement */
+.flash {
+  animation: fadeIn 0.1s ease-out;
+}
+
+/* Countdown enhancement */
+.countdown {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.countdown:not(.hidden) {
+  animation: pulse 1s infinite, glow 2s infinite;
+}
+
+/* Loading spinner enhancement */
+.spinner {
+  animation: spin 1s linear infinite, glow 2s infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Hidden Class */
@@ -515,4 +710,41 @@ button:disabled {
 .download-all-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
+}
+
+.timing-control {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  margin: 10px 0;
+}
+
+.timing-control label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.timing-control .control-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.9rem;
+  color: #333;
+  transition: var(--transition);
+}
+
+.timing-control .control-select:hover {
+  border-color: var(--primary-color);
+}
+
+.timing-control .control-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
 }

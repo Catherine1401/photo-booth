@@ -779,16 +779,18 @@ let countdownEl;
 let filterSelect;
 let frameSelect;
 let captureBtn;
-let resetBtn;
 let photoStrip;
 let previewContainer = null;
 let loadingSpinner = null;
+let countdownTimeSelect;
+let flashDurationSelect;
 
 // === State ===
 let filterValue = 'none';
 let isCapturing = false;
 let capturedPhotos = [];
 let originalPhotos = [];
+let isProcessing = false;
 
 // === Photo Data Structure ===
 class PhotoData {
@@ -835,8 +837,9 @@ function initializeElements() {
     filterSelect = document.getElementById('filter-select');
     frameSelect = document.getElementById('frame-select');
     captureBtn = document.getElementById('capture-btn');
-    resetBtn = document.getElementById('reset-btn');
     photoStrip = document.getElementById('photo-strip');
+    countdownTimeSelect = document.getElementById('countdown-time');
+    flashDurationSelect = document.getElementById('flash-duration');
 
     const elements = {
       webcam,
@@ -844,8 +847,9 @@ function initializeElements() {
       filterSelect,
       frameSelect,
       captureBtn,
-      resetBtn,
-      photoStrip
+      photoStrip,
+      countdownTimeSelect,
+      flashDurationSelect
     };
 
     for (const [name, element] of Object.entries(elements)) {
@@ -871,16 +875,34 @@ function createLoadingSpinner() {
 
 function showLoading() {
   loadingSpinner.classList.remove('hidden');
+  loadingSpinner.style.display = 'flex';
+  loadingSpinner.style.justifyContent = 'center';
+  loadingSpinner.style.alignItems = 'center';
+  loadingSpinner.style.position = 'fixed';
+  loadingSpinner.style.top = '20px';
+  loadingSpinner.style.right = '20px';
+  loadingSpinner.style.zIndex = '1000';
 }
 
 function hideLoading() {
   loadingSpinner.classList.add('hidden');
+  loadingSpinner.style.display = 'none';
 }
 
 // === Event Listeners ===
 function setupEventListeners() {
   captureBtn.addEventListener('click', takePhotoSequence);
-  resetBtn.addEventListener('click', resetPhotos);
+  
+  // Add hover effects
+  captureBtn.addEventListener('mouseenter', () => {
+    if (!isCapturing) {
+      captureBtn.classList.add('hover');
+    }
+  });
+  
+  captureBtn.addEventListener('mouseleave', () => {
+    captureBtn.classList.remove('hover');
+  });
 }
 
 // === Webcam Setup ===
@@ -916,11 +938,30 @@ async function startWebcam() {
 // === Photo Capture ===
 async function takePhotoSequence() {
   if (isCapturing) return;
-  isCapturing = true;
-  captureBtn.disabled = true;
-
+  
   try {
-    await countdown(3);
+    isCapturing = true;
+    setUIState(true);
+    
+    // Clear existing preview and create new one
+    if (previewContainer) {
+      previewContainer.remove();
+    }
+    previewContainer = createPreviewContainer();
+    photoStrip.appendChild(previewContainer);
+    
+    // Clear captured photos for new sequence
+    capturedPhotos = [];
+    originalPhotos = [];
+    
+    // Remove existing download button if any
+    const downloadBtn = document.querySelector('.download-all-btn');
+    if (downloadBtn) {
+      downloadBtn.remove();
+    }
+    
+    const initialCountdown = parseInt(countdownTimeSelect.value);
+    await countdown(initialCountdown);
     
     for (let i = 0; i < 4; i++) {
       showFlash();
@@ -941,12 +982,7 @@ async function takePhotoSequence() {
       // Store original photo data
       capturedPhotos.push(photoData);
       
-      // Update preview
-      if (!previewContainer) {
-        previewContainer = createPreviewContainer();
-        photoStrip.appendChild(previewContainer);
-      }
-      
+      // Add to new preview
       addPhotoToPreview(previewContainer, framedPhoto, capturedPhotos.length - 1);
 
       if (i < 3) {
@@ -958,9 +994,10 @@ async function takePhotoSequence() {
     
   } catch (error) {
     console.error('Error taking photo:', error);
+    alert('Có lỗi xảy ra khi chụp ảnh. Vui lòng thử lại.');
   } finally {
     isCapturing = false;
-    captureBtn.disabled = false;
+    setUIState(false);
   }
 }
 
@@ -1130,8 +1167,10 @@ function showFlash() {
   flash.className = 'flash';
   document.querySelector('.webcam-box').appendChild(flash);
   
+  const duration = parseInt(flashDurationSelect.value) / 100;
+  
   requestAnimationFrame(() => {
-    flash.style.opacity = '0.8';
+    flash.style.opacity = duration.toString();
     setTimeout(() => {
       flash.style.opacity = '0';
       setTimeout(() => {
@@ -1238,29 +1277,58 @@ function applyFilterToContext(context, filterName) {
 function createPreviewContainer() {
   const container = document.createElement('div');
   container.className = 'photo-container';
+  container.style.display = 'flex';
+  container.style.flexDirection = 'column';
+  container.style.gap = '20px';
+  container.style.padding = '20px';
+  container.style.backgroundColor = '#f5f5f5';
+  container.style.borderRadius = '12px';
+  container.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
   return container;
 }
 
 function addPhotoToPreview(container, photoUrl, index) {
   const photoWrapper = document.createElement('div');
   photoWrapper.className = 'photo-wrapper';
+  photoWrapper.style.position = 'relative';
+  photoWrapper.style.width = '100%';
+  photoWrapper.style.maxWidth = '640px';
+  photoWrapper.style.margin = '0 auto';
+  photoWrapper.style.backgroundColor = 'white';
+  photoWrapper.style.padding = '10px';
+  photoWrapper.style.borderRadius = '12px';
+  photoWrapper.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
   
   const img = document.createElement('img');
   img.src = photoUrl;
   img.className = 'fade-in';
+  img.style.width = '100%';
+  img.style.height = 'auto';
+  img.style.borderRadius = '8px';
+  img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+  img.style.transition = 'transform 0.3s ease';
   
-  // Add thumbnail
-  const thumbnail = document.createElement('div');
-  thumbnail.className = 'thumbnail';
-  thumbnail.onclick = () => showFullSize(photoUrl);
+  // Add hover effect
+  img.addEventListener('mouseenter', () => {
+    img.style.transform = 'scale(1.02)';
+  });
   
-  const thumbImg = document.createElement('img');
-  thumbImg.src = photoUrl;
-  thumbnail.appendChild(thumbImg);
+  img.addEventListener('mouseleave', () => {
+    img.style.transform = 'scale(1)';
+  });
   
   photoWrapper.appendChild(img);
-  photoWrapper.appendChild(thumbnail);
   container.appendChild(photoWrapper);
+  
+  // Add animation
+  photoWrapper.style.opacity = '0';
+  photoWrapper.style.transform = 'translateY(20px)';
+  photoWrapper.style.transition = 'opacity 0.5s, transform 0.5s';
+  
+  requestAnimationFrame(() => {
+    photoWrapper.style.opacity = '1';
+    photoWrapper.style.transform = 'translateY(0)';
+  });
 }
 
 function showFullSize(photoUrl) {
@@ -1295,25 +1363,33 @@ async function updatePreviewWithFrame(frameType) {
   }
 }
 
-// === Reset Functionality ===
-function resetPhotos() {
-  capturedPhotos = [];
-  originalPhotos = [];
-  if (previewContainer) {
-    previewContainer.remove();
-    previewContainer = null;
-  }
-  const downloadBtn = document.querySelector('.download-all-btn');
-  if (downloadBtn) {
-    downloadBtn.remove();
-  }
-}
-
 // === Download Functionality ===
 function addDownloadButton() {
   const downloadBtn = document.createElement('button');
   downloadBtn.className = 'download-all-btn';
   downloadBtn.innerHTML = '<i class="fas fa-download"></i> Tải tất cả ảnh';
+  downloadBtn.style.backgroundColor = '#2196F3';
+  downloadBtn.style.color = 'white';
+  downloadBtn.style.border = 'none';
+  downloadBtn.style.padding = '12px 24px';
+  downloadBtn.style.borderRadius = '6px';
+  downloadBtn.style.cursor = 'pointer';
+  downloadBtn.style.fontSize = '16px';
+  downloadBtn.style.margin = '20px auto';
+  downloadBtn.style.display = 'block';
+  downloadBtn.style.transition = 'background-color 0.3s, transform 0.2s';
+  
+  // Add hover effect
+  downloadBtn.addEventListener('mouseenter', () => {
+    downloadBtn.style.backgroundColor = '#1976D2';
+    downloadBtn.style.transform = 'scale(1.05)';
+  });
+  
+  downloadBtn.addEventListener('mouseleave', () => {
+    downloadBtn.style.backgroundColor = '#2196F3';
+    downloadBtn.style.transform = 'scale(1)';
+  });
+  
   downloadBtn.onclick = showDownloadCombined;
   photoStrip.appendChild(downloadBtn);
 }
@@ -1380,6 +1456,39 @@ async function createCombinedImage() {
     console.error('Error creating combined image:', error);
     return null;
   } finally {
+    hideLoading();
+  }
+}
+
+// === UI State Management ===
+function setUIState(isCapturing) {
+  // Disable/Enable capture button
+  captureBtn.disabled = isCapturing;
+  captureBtn.classList.toggle('disabled', isCapturing);
+  
+  // Disable/Enable filter select
+  filterSelect.disabled = isCapturing;
+  filterSelect.classList.toggle('disabled', isCapturing);
+  
+  // Disable/Enable frame select
+  frameSelect.disabled = isCapturing;
+  frameSelect.classList.toggle('disabled', isCapturing);
+  
+  // Update button text and style
+  if (isCapturing) {
+    captureBtn.textContent = 'Đang chụp...';
+    captureBtn.style.backgroundColor = '#666';
+    captureBtn.style.cursor = 'not-allowed';
+  } else {
+    captureBtn.textContent = 'Chụp ảnh';
+    captureBtn.style.backgroundColor = '#4CAF50';
+    captureBtn.style.cursor = 'pointer';
+  }
+  
+  // Show/hide loading spinner
+  if (isCapturing) {
+    showLoading();
+  } else {
     hideLoading();
   }
 }
