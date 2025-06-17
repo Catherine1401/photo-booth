@@ -1,4 +1,779 @@
-// === DOM elements ===
+// === Constants ===
+const FRAME_TYPES = {
+  NONE: 'none',
+  WOOD: 'wood',
+  VINTAGE: 'vintage',
+  GOLD: 'gold',
+  CLASSIC: 'classic',
+  ELEGANT: 'elegant',
+  ORNATE: 'ornate',
+  FLORAL: 'floral',
+  VICTORIAN: 'victorian',
+  PINK_CUTE: 'pink_cute',
+  PINK_FLORAL: 'pink_floral',
+  PINK_HEART: 'pink_heart',
+  KITTY: 'kitty',
+  BUNNY: 'bunny',
+  STAR: 'star',
+  CLOUD: 'cloud',
+  RAINBOW: 'rainbow'
+};
+
+// === Pattern Generators ===
+function createWoodPattern(ctx, width, height) {
+  const pattern = ctx.createLinearGradient(0, 0, width, height);
+  pattern.addColorStop(0, '#8B4513');
+  pattern.addColorStop(0.1, '#A0522D');
+  pattern.addColorStop(0.2, '#8B4513');
+  pattern.addColorStop(0.3, '#A0522D');
+  pattern.addColorStop(0.4, '#8B4513');
+  pattern.addColorStop(0.5, '#A0522D');
+  pattern.addColorStop(0.6, '#8B4513');
+  pattern.addColorStop(0.7, '#A0522D');
+  pattern.addColorStop(0.8, '#8B4513');
+  pattern.addColorStop(0.9, '#A0522D');
+  pattern.addColorStop(1, '#8B4513');
+  return pattern;
+}
+
+function createVintagePattern(ctx, width, height) {
+  const pattern = ctx.createLinearGradient(0, 0, width, height);
+  pattern.addColorStop(0, '#f5e6d3');
+  pattern.addColorStop(0.2, '#f8e8d0');
+  pattern.addColorStop(0.4, '#f5e6d3');
+  pattern.addColorStop(0.6, '#f8e8d0');
+  pattern.addColorStop(0.8, '#f5e6d3');
+  pattern.addColorStop(1, '#f8e8d0');
+  return pattern;
+}
+
+function createGoldPattern(ctx, width, height) {
+  const pattern = ctx.createLinearGradient(0, 0, width, height);
+  pattern.addColorStop(0, '#FFD700');
+  pattern.addColorStop(0.2, '#D4AF37');
+  pattern.addColorStop(0.4, '#FFD700');
+  pattern.addColorStop(0.6, '#D4AF37');
+  pattern.addColorStop(0.8, '#FFD700');
+  pattern.addColorStop(1, '#D4AF37');
+  return pattern;
+}
+
+function createOrnatePattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#D4AF37');
+  basePattern.addColorStop(0.5, '#FFD700');
+  basePattern.addColorStop(1, '#D4AF37');
+
+  // Draw ornate border
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add decorative elements
+  ctx.strokeStyle = '#B8860B';
+  ctx.lineWidth = 2;
+  
+  // Draw corner swirls
+  const cornerSize = Math.min(width, height) * 0.2;
+  for (let x = 0; x < width; x += cornerSize) {
+    for (let y = 0; y < height; y += cornerSize) {
+      if ((x === 0 || x === width - cornerSize) && 
+          (y === 0 || y === height - cornerSize)) {
+        drawCornerSwirl(ctx, x, y, cornerSize);
+      }
+    }
+  }
+
+  return basePattern;
+}
+
+function createFloralPattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#FFF8DC');
+  basePattern.addColorStop(0.5, '#FFE4B5');
+  basePattern.addColorStop(1, '#FFF8DC');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add floral elements
+  ctx.strokeStyle = '#DEB887';
+  ctx.lineWidth = 1.5;
+  
+  // Draw floral border
+  const borderSize = Math.min(width, height) * 0.15;
+  for (let x = borderSize; x < width - borderSize; x += borderSize * 2) {
+    drawFloralElement(ctx, x, borderSize, borderSize);
+    drawFloralElement(ctx, x, height - borderSize, borderSize);
+  }
+  for (let y = borderSize; y < height - borderSize; y += borderSize * 2) {
+    drawFloralElement(ctx, borderSize, y, borderSize);
+    drawFloralElement(ctx, width - borderSize, y, borderSize);
+  }
+
+  return basePattern;
+}
+
+function createVictorianPattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#F5F5DC');
+  basePattern.addColorStop(0.5, '#FAEBD7');
+  basePattern.addColorStop(1, '#F5F5DC');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add Victorian elements
+  ctx.strokeStyle = '#8B4513';
+  ctx.lineWidth = 2;
+  
+  // Draw corner decorations
+  const cornerSize = Math.min(width, height) * 0.25;
+  for (let x = 0; x < width; x += cornerSize) {
+    for (let y = 0; y < height; y += cornerSize) {
+      if ((x === 0 || x === width - cornerSize) && 
+          (y === 0 || y === height - cornerSize)) {
+        drawVictorianCorner(ctx, x, y, cornerSize);
+      }
+    }
+  }
+
+  return basePattern;
+}
+
+function createPinkCutePattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#FFB6C1');
+  basePattern.addColorStop(0.5, '#FFC0CB');
+  basePattern.addColorStop(1, '#FFB6C1');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add cute elements
+  ctx.strokeStyle = '#FF69B4';
+  ctx.lineWidth = 2;
+  
+  // Draw hearts in corners
+  const cornerSize = Math.min(width, height) * 0.2;
+  for (let x = 0; x < width; x += cornerSize) {
+    for (let y = 0; y < height; y += cornerSize) {
+      if ((x === 0 || x === width - cornerSize) && 
+          (y === 0 || y === height - cornerSize)) {
+        drawHeart(ctx, x + cornerSize/2, y + cornerSize/2, cornerSize/2);
+      }
+    }
+  }
+
+  // Draw small hearts along borders
+  const borderSize = Math.min(width, height) * 0.15;
+  for (let x = borderSize; x < width - borderSize; x += borderSize) {
+    drawHeart(ctx, x, borderSize, borderSize/3);
+    drawHeart(ctx, x, height - borderSize, borderSize/3);
+  }
+  for (let y = borderSize; y < height - borderSize; y += borderSize) {
+    drawHeart(ctx, borderSize, y, borderSize/3);
+    drawHeart(ctx, width - borderSize, y, borderSize/3);
+  }
+
+  return basePattern;
+}
+
+function createPinkFloralPattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#FFE4E1');
+  basePattern.addColorStop(0.5, '#FFF0F5');
+  basePattern.addColorStop(1, '#FFE4E1');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add floral elements
+  ctx.strokeStyle = '#FF69B4';
+  ctx.lineWidth = 1.5;
+  
+  // Draw flowers along borders
+  const borderSize = Math.min(width, height) * 0.15;
+  for (let x = borderSize; x < width - borderSize; x += borderSize * 1.5) {
+    drawCuteFlower(ctx, x, borderSize, borderSize/2);
+    drawCuteFlower(ctx, x, height - borderSize, borderSize/2);
+  }
+  for (let y = borderSize; y < height - borderSize; y += borderSize * 1.5) {
+    drawCuteFlower(ctx, borderSize, y, borderSize/2);
+    drawCuteFlower(ctx, width - borderSize, y, borderSize/2);
+  }
+
+  return basePattern;
+}
+
+function createPinkHeartPattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#FFB6C1');
+  basePattern.addColorStop(0.5, '#FFC0CB');
+  basePattern.addColorStop(1, '#FFB6C1');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add heart pattern
+  ctx.strokeStyle = '#FF69B4';
+  ctx.lineWidth = 1;
+  
+  // Draw small hearts in pattern
+  const heartSize = Math.min(width, height) * 0.1;
+  for (let x = heartSize; x < width; x += heartSize * 2) {
+    for (let y = heartSize; y < height; y += heartSize * 2) {
+      drawSmallHeart(ctx, x, y, heartSize/2);
+    }
+  }
+
+  return basePattern;
+}
+
+function createKittyPattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#FFE4E1');
+  basePattern.addColorStop(0.5, '#FFF0F5');
+  basePattern.addColorStop(1, '#FFE4E1');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add kitty elements
+  ctx.strokeStyle = '#FF69B4';
+  ctx.lineWidth = 1.5;
+  
+  // Draw kitty faces in corners
+  const cornerSize = Math.min(width, height) * 0.2;
+  for (let x = 0; x < width; x += cornerSize) {
+    for (let y = 0; y < height; y += cornerSize) {
+      if ((x === 0 || x === width - cornerSize) && 
+          (y === 0 || y === height - cornerSize)) {
+        drawKittyFace(ctx, x + cornerSize/2, y + cornerSize/2, cornerSize/2);
+      }
+    }
+  }
+
+  // Draw small paw prints along borders
+  const borderSize = Math.min(width, height) * 0.15;
+  for (let x = borderSize; x < width - borderSize; x += borderSize) {
+    drawPawPrint(ctx, x, borderSize, borderSize/3);
+    drawPawPrint(ctx, x, height - borderSize, borderSize/3);
+  }
+  for (let y = borderSize; y < height - borderSize; y += borderSize) {
+    drawPawPrint(ctx, borderSize, y, borderSize/3);
+    drawPawPrint(ctx, width - borderSize, y, borderSize/3);
+  }
+
+  return basePattern;
+}
+
+function createBunnyPattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#F0F8FF');
+  basePattern.addColorStop(0.5, '#E6E6FA');
+  basePattern.addColorStop(1, '#F0F8FF');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add bunny elements
+  ctx.strokeStyle = '#9370DB';
+  ctx.lineWidth = 1.5;
+  
+  // Draw bunny faces in corners
+  const cornerSize = Math.min(width, height) * 0.2;
+  for (let x = 0; x < width; x += cornerSize) {
+    for (let y = 0; y < height; y += cornerSize) {
+      if ((x === 0 || x === width - cornerSize) && 
+          (y === 0 || y === height - cornerSize)) {
+        drawBunnyFace(ctx, x + cornerSize/2, y + cornerSize/2, cornerSize/2);
+      }
+    }
+  }
+
+  // Draw carrots along borders
+  const borderSize = Math.min(width, height) * 0.15;
+  for (let x = borderSize; x < width - borderSize; x += borderSize * 1.5) {
+    drawCarrot(ctx, x, borderSize, borderSize/2);
+    drawCarrot(ctx, x, height - borderSize, borderSize/2);
+  }
+  for (let y = borderSize; y < height - borderSize; y += borderSize * 1.5) {
+    drawCarrot(ctx, borderSize, y, borderSize/2);
+    drawCarrot(ctx, width - borderSize, y, borderSize/2);
+  }
+
+  return basePattern;
+}
+
+function createStarPattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#E6E6FA');
+  basePattern.addColorStop(0.5, '#F0F8FF');
+  basePattern.addColorStop(1, '#E6E6FA');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add star elements
+  ctx.strokeStyle = '#9370DB';
+  ctx.lineWidth = 1;
+  
+  // Draw stars in pattern
+  const starSize = Math.min(width, height) * 0.1;
+  for (let x = starSize; x < width; x += starSize * 2) {
+    for (let y = starSize; y < height; y += starSize * 2) {
+      drawStar(ctx, x, y, starSize/2);
+    }
+  }
+
+  return basePattern;
+}
+
+function createCloudPattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#F0F8FF');
+  basePattern.addColorStop(0.5, '#E6E6FA');
+  basePattern.addColorStop(1, '#F0F8FF');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add cloud elements
+  ctx.strokeStyle = '#87CEEB';
+  ctx.lineWidth = 1.5;
+  
+  // Draw clouds along borders
+  const borderSize = Math.min(width, height) * 0.15;
+  for (let x = borderSize; x < width - borderSize; x += borderSize * 2) {
+    drawCloud(ctx, x, borderSize, borderSize);
+    drawCloud(ctx, x, height - borderSize, borderSize);
+  }
+  for (let y = borderSize; y < height - borderSize; y += borderSize * 2) {
+    drawCloud(ctx, borderSize, y, borderSize);
+    drawCloud(ctx, width - borderSize, y, borderSize);
+  }
+
+  return basePattern;
+}
+
+function createRainbowPattern(ctx, width, height) {
+  // Create base gradient
+  const basePattern = ctx.createLinearGradient(0, 0, width, height);
+  basePattern.addColorStop(0, '#FFE4E1');
+  basePattern.addColorStop(0.5, '#F0F8FF');
+  basePattern.addColorStop(1, '#FFE4E1');
+
+  // Draw base
+  ctx.fillStyle = basePattern;
+  ctx.fillRect(0, 0, width, height);
+
+  // Add rainbow elements
+  const borderSize = Math.min(width, height) * 0.15;
+  
+  // Draw rainbow border
+  const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'];
+  const arcHeight = borderSize * 0.8;
+  
+  for (let i = 0; i < colors.length; i++) {
+    ctx.beginPath();
+    ctx.strokeStyle = colors[i];
+    ctx.lineWidth = borderSize / colors.length;
+    ctx.arc(width/2, height/2, 
+      Math.min(width, height)/2 - borderSize + i * (borderSize / colors.length),
+      0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Draw small clouds in corners
+  const cornerSize = Math.min(width, height) * 0.2;
+  for (let x = 0; x < width; x += cornerSize) {
+    for (let y = 0; y < height; y += cornerSize) {
+      if ((x === 0 || x === width - cornerSize) && 
+          (y === 0 || y === height - cornerSize)) {
+        drawCloud(ctx, x + cornerSize/2, y + cornerSize/2, cornerSize/2);
+      }
+    }
+  }
+
+  return basePattern;
+}
+
+// === Helper Functions for Drawing Patterns ===
+function drawCornerSwirl(ctx, x, y, size) {
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.bezierCurveTo(
+    x + size * 0.5, y,
+    x + size * 0.5, y + size * 0.5,
+    x, y + size * 0.5
+  );
+  ctx.stroke();
+}
+
+function drawFloralElement(ctx, x, y, size) {
+  ctx.beginPath();
+  ctx.arc(x, y, size * 0.3, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Draw petals
+  for (let i = 0; i < 5; i++) {
+    const angle = (i * Math.PI * 2) / 5;
+    const petalX = x + Math.cos(angle) * size * 0.4;
+    const petalY = y + Math.sin(angle) * size * 0.4;
+    ctx.beginPath();
+    ctx.arc(petalX, petalY, size * 0.2, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+}
+
+function drawVictorianCorner(ctx, x, y, size) {
+  // Draw main corner element
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + size, y);
+  ctx.lineTo(x, y + size);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Add decorative elements
+  const spacing = size / 4;
+  for (let i = 1; i < 4; i++) {
+    ctx.beginPath();
+    ctx.moveTo(x + spacing * i, y);
+    ctx.lineTo(x, y + spacing * i);
+    ctx.stroke();
+  }
+}
+
+function drawHeart(ctx, x, y, size) {
+  ctx.beginPath();
+  ctx.moveTo(x, y + size * 0.3);
+  ctx.bezierCurveTo(
+    x, y, 
+    x - size, y, 
+    x - size, y + size * 0.3
+  );
+  ctx.bezierCurveTo(
+    x - size, y + size * 0.6, 
+    x, y + size * 0.8, 
+    x, y + size * 0.8
+  );
+  ctx.bezierCurveTo(
+    x, y + size * 0.8, 
+    x + size, y + size * 0.6, 
+    x + size, y + size * 0.3
+  );
+  ctx.bezierCurveTo(
+    x + size, y, 
+    x, y, 
+    x, y + size * 0.3
+  );
+  ctx.stroke();
+}
+
+function drawCuteFlower(ctx, x, y, size) {
+  // Draw center
+  ctx.beginPath();
+  ctx.arc(x, y, size * 0.2, 0, Math.PI * 2);
+  ctx.fillStyle = '#FF69B4';
+  ctx.fill();
+  
+  // Draw petals
+  for (let i = 0; i < 5; i++) {
+    const angle = (i * Math.PI * 2) / 5;
+    const petalX = x + Math.cos(angle) * size * 0.4;
+    const petalY = y + Math.sin(angle) * size * 0.4;
+    ctx.beginPath();
+    ctx.arc(petalX, petalY, size * 0.2, 0, Math.PI * 2);
+    ctx.fillStyle = '#FFB6C1';
+    ctx.fill();
+  }
+}
+
+function drawSmallHeart(ctx, x, y, size) {
+  ctx.beginPath();
+  ctx.moveTo(x, y + size * 0.3);
+  ctx.bezierCurveTo(
+    x, y, 
+    x - size, y, 
+    x - size, y + size * 0.3
+  );
+  ctx.bezierCurveTo(
+    x - size, y + size * 0.6, 
+    x, y + size * 0.8, 
+    x, y + size * 0.8
+  );
+  ctx.bezierCurveTo(
+    x, y + size * 0.8, 
+    x + size, y + size * 0.6, 
+    x + size, y + size * 0.3
+  );
+  ctx.bezierCurveTo(
+    x + size, y, 
+    x, y, 
+    x, y + size * 0.3
+  );
+  ctx.fillStyle = '#FF69B4';
+  ctx.fill();
+}
+
+function drawKittyFace(ctx, x, y, size) {
+  // Draw face
+  ctx.beginPath();
+  ctx.arc(x, y, size * 0.8, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Draw ears
+  ctx.beginPath();
+  ctx.moveTo(x - size * 0.5, y - size * 0.5);
+  ctx.lineTo(x - size * 0.8, y - size * 0.8);
+  ctx.lineTo(x - size * 0.3, y - size * 0.3);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(x + size * 0.5, y - size * 0.5);
+  ctx.lineTo(x + size * 0.8, y - size * 0.8);
+  ctx.lineTo(x + size * 0.3, y - size * 0.3);
+  ctx.stroke();
+  
+  // Draw eyes
+  ctx.beginPath();
+  ctx.arc(x - size * 0.3, y - size * 0.1, size * 0.1, 0, Math.PI * 2);
+  ctx.arc(x + size * 0.3, y - size * 0.1, size * 0.1, 0, Math.PI * 2);
+  ctx.fillStyle = '#FF69B4';
+  ctx.fill();
+  
+  // Draw nose
+  ctx.beginPath();
+  ctx.arc(x, y + size * 0.1, size * 0.1, 0, Math.PI * 2);
+  ctx.fillStyle = '#FF69B4';
+  ctx.fill();
+}
+
+function drawPawPrint(ctx, x, y, size) {
+  // Draw main pad
+  ctx.beginPath();
+  ctx.arc(x, y, size * 0.4, 0, Math.PI * 2);
+  ctx.fillStyle = '#FF69B4';
+  ctx.fill();
+  
+  // Draw toe pads
+  const toePositions = [
+    {x: -0.3, y: -0.3},
+    {x: 0.3, y: -0.3},
+    {x: -0.3, y: 0.3},
+    {x: 0.3, y: 0.3}
+  ];
+  
+  toePositions.forEach(pos => {
+    ctx.beginPath();
+    ctx.arc(x + pos.x * size, y + pos.y * size, size * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function drawBunnyFace(ctx, x, y, size) {
+  // Draw face
+  ctx.beginPath();
+  ctx.arc(x, y, size * 0.8, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Draw ears
+  ctx.beginPath();
+  ctx.moveTo(x - size * 0.3, y - size * 0.5);
+  ctx.lineTo(x - size * 0.3, y - size * 1.2);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(x + size * 0.3, y - size * 0.5);
+  ctx.lineTo(x + size * 0.3, y - size * 1.2);
+  ctx.stroke();
+  
+  // Draw eyes
+  ctx.beginPath();
+  ctx.arc(x - size * 0.3, y - size * 0.1, size * 0.1, 0, Math.PI * 2);
+  ctx.arc(x + size * 0.3, y - size * 0.1, size * 0.1, 0, Math.PI * 2);
+  ctx.fillStyle = '#9370DB';
+  ctx.fill();
+  
+  // Draw nose
+  ctx.beginPath();
+  ctx.arc(x, y + size * 0.1, size * 0.1, 0, Math.PI * 2);
+  ctx.fillStyle = '#9370DB';
+  ctx.fill();
+}
+
+function drawCarrot(ctx, x, y, size) {
+  // Draw carrot body
+  ctx.beginPath();
+  ctx.moveTo(x, y - size);
+  ctx.lineTo(x + size * 0.5, y);
+  ctx.lineTo(x - size * 0.5, y);
+  ctx.closePath();
+  ctx.fillStyle = '#FFA500';
+  ctx.fill();
+  
+  // Draw carrot top
+  ctx.beginPath();
+  ctx.moveTo(x, y - size);
+  ctx.lineTo(x - size * 0.3, y - size * 1.2);
+  ctx.lineTo(x + size * 0.3, y - size * 1.2);
+  ctx.closePath();
+  ctx.fillStyle = '#228B22';
+  ctx.fill();
+}
+
+function drawStar(ctx, x, y, size) {
+  const spikes = 5;
+  const outerRadius = size;
+  const innerRadius = size * 0.4;
+  
+  ctx.beginPath();
+  for (let i = 0; i < spikes * 2; i++) {
+    const radius = i % 2 === 0 ? outerRadius : innerRadius;
+    const angle = (i * Math.PI) / spikes;
+    const px = x + Math.cos(angle) * radius;
+    const py = y + Math.sin(angle) * radius;
+    if (i === 0) {
+      ctx.moveTo(px, py);
+    } else {
+      ctx.lineTo(px, py);
+    }
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#9370DB';
+  ctx.fill();
+}
+
+function drawCloud(ctx, x, y, size) {
+  ctx.beginPath();
+  ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
+  ctx.arc(x + size * 0.4, y - size * 0.2, size * 0.4, 0, Math.PI * 2);
+  ctx.arc(x + size * 0.4, y + size * 0.2, size * 0.4, 0, Math.PI * 2);
+  ctx.arc(x - size * 0.4, y - size * 0.2, size * 0.4, 0, Math.PI * 2);
+  ctx.arc(x - size * 0.4, y + size * 0.2, size * 0.4, 0, Math.PI * 2);
+  ctx.fillStyle = '#87CEEB';
+  ctx.fill();
+}
+
+const FRAME_TEMPLATES = {
+  [FRAME_TYPES.NONE]: null,
+  [FRAME_TYPES.WOOD]: {
+    border: '30px solid #8B4513',
+    background: '#f8e8d0',
+    padding: 50,
+    patternGenerator: createWoodPattern
+  },
+  [FRAME_TYPES.VINTAGE]: {
+    border: '40px solid #8B4513',
+    background: '#f5e6d3',
+    padding: 60,
+    patternGenerator: createVintagePattern
+  },
+  [FRAME_TYPES.GOLD]: {
+    border: '35px solid #D4AF37',
+    background: '#FFD700',
+    padding: 50,
+    patternGenerator: createGoldPattern
+  },
+  [FRAME_TYPES.CLASSIC]: {
+    border: '25px solid #2F4F4F',
+    background: '#fff',
+    padding: 40
+  },
+  [FRAME_TYPES.ELEGANT]: {
+    border: '20px solid #000',
+    background: '#fff',
+    padding: 30
+  },
+  [FRAME_TYPES.ORNATE]: {
+    border: '40px solid #D4AF37',
+    background: '#FFD700',
+    padding: 60,
+    patternGenerator: createOrnatePattern
+  },
+  [FRAME_TYPES.FLORAL]: {
+    border: '45px solid #DEB887',
+    background: '#FFF8DC',
+    padding: 65,
+    patternGenerator: createFloralPattern
+  },
+  [FRAME_TYPES.VICTORIAN]: {
+    border: '35px solid #8B4513',
+    background: '#F5F5DC',
+    padding: 55,
+    patternGenerator: createVictorianPattern
+  },
+  [FRAME_TYPES.PINK_CUTE]: {
+    border: '30px solid #FFB6C1',
+    background: '#FFC0CB',
+    padding: 45,
+    patternGenerator: createPinkCutePattern
+  },
+  [FRAME_TYPES.PINK_FLORAL]: {
+    border: '35px solid #FF69B4',
+    background: '#FFE4E1',
+    padding: 50,
+    patternGenerator: createPinkFloralPattern
+  },
+  [FRAME_TYPES.PINK_HEART]: {
+    border: '25px solid #FFB6C1',
+    background: '#FFC0CB',
+    padding: 40,
+    patternGenerator: createPinkHeartPattern
+  },
+  [FRAME_TYPES.KITTY]: {
+    border: '30px solid #FFB6C1',
+    background: '#FFE4E1',
+    padding: 45,
+    patternGenerator: createKittyPattern
+  },
+  [FRAME_TYPES.BUNNY]: {
+    border: '35px solid #9370DB',
+    background: '#F0F8FF',
+    padding: 50,
+    patternGenerator: createBunnyPattern
+  },
+  [FRAME_TYPES.STAR]: {
+    border: '25px solid #9370DB',
+    background: '#E6E6FA',
+    padding: 40,
+    patternGenerator: createStarPattern
+  },
+  [FRAME_TYPES.CLOUD]: {
+    border: '30px solid #87CEEB',
+    background: '#F0F8FF',
+    padding: 45,
+    patternGenerator: createCloudPattern
+  },
+  [FRAME_TYPES.RAINBOW]: {
+    border: '40px solid #FF69B4',
+    background: '#FFE4E1',
+    padding: 55,
+    patternGenerator: createRainbowPattern
+  }
+};
+
+// === DOM Elements ===
 let webcam;
 let countdownEl;
 let filterSelect;
@@ -6,17 +781,53 @@ let frameSelect;
 let captureBtn;
 let resetBtn;
 let photoStrip;
+let previewContainer = null;
+let loadingSpinner = null;
 
+// === State ===
 let filterValue = 'none';
-let frameImage = null;
-let combinedCanvas = document.createElement('canvas');
-let combinedCtx = combinedCanvas.getContext('2d');
 let isCapturing = false;
 let capturedPhotos = [];
-let originalPhotos = []; // Store original photos without frames
-let previewContainer = null;
+let originalPhotos = [];
 
-// === Initialize DOM elements ===
+// === Photo Data Structure ===
+class PhotoData {
+  constructor(imageData, filter, frame) {
+    this.imageData = imageData;
+    this.filter = filter;
+    this.frame = frame;
+    this.framedData = null; // Cache for framed image
+  }
+
+  async getFramedImage() {
+    if (this.framedData) return this.framedData;
+    
+    this.framedData = await applyFrameToPhoto(this.imageData, this.frame);
+    return this.framedData;
+  }
+
+  async updateFrame(newFrame) {
+    this.frame = newFrame;
+    this.framedData = null; // Clear cache when frame changes
+    return this.getFramedImage();
+  }
+}
+
+// === Initialize Application ===
+document.addEventListener('DOMContentLoaded', () => {
+  if (!initializeElements()) {
+    console.error('Failed to initialize application');
+    return;
+  }
+
+  setupEventListeners();
+  startWebcam();
+  setupFilters();
+  setupFrames();
+  createLoadingSpinner();
+});
+
+// === Element Initialization ===
 function initializeElements() {
   try {
     webcam = document.getElementById('webcam');
@@ -27,7 +838,6 @@ function initializeElements() {
     resetBtn = document.getElementById('reset-btn');
     photoStrip = document.getElementById('photo-strip');
 
-    // Kiểm tra từng element
     const elements = {
       webcam,
       countdownEl,
@@ -51,7 +861,29 @@ function initializeElements() {
   }
 }
 
-// === Webcam setup ===
+// === Loading Spinner ===
+function createLoadingSpinner() {
+  loadingSpinner = document.createElement('div');
+  loadingSpinner.className = 'loading-spinner hidden';
+  loadingSpinner.innerHTML = '<div class="spinner"></div>';
+  document.body.appendChild(loadingSpinner);
+}
+
+function showLoading() {
+  loadingSpinner.classList.remove('hidden');
+}
+
+function hideLoading() {
+  loadingSpinner.classList.add('hidden');
+}
+
+// === Event Listeners ===
+function setupEventListeners() {
+  captureBtn.addEventListener('click', takePhotoSequence);
+  resetBtn.addEventListener('click', resetPhotos);
+}
+
+// === Webcam Setup ===
 async function startWebcam() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -63,8 +895,7 @@ async function startWebcam() {
     });
     
     webcam.srcObject = stream;
-    
-    // Đợi webcam sẵn sàng
+
     await new Promise((resolve) => {
       webcam.onloadedmetadata = () => {
         console.log('Webcam loaded:', webcam.videoWidth, 'x', webcam.videoHeight);
@@ -73,7 +904,6 @@ async function startWebcam() {
       };
     });
 
-    // Đợi thêm 1 giây để đảm bảo webcam hoạt động ổn định
     await new Promise(resolve => setTimeout(resolve, 1000));
     
   } catch (err) {
@@ -83,7 +913,218 @@ async function startWebcam() {
   }
 }
 
-// === Flash effect when taking photo ===
+// === Photo Capture ===
+async function takePhotoSequence() {
+  if (isCapturing) return;
+  isCapturing = true;
+  captureBtn.disabled = true;
+
+  try {
+    await countdown(3);
+    
+    for (let i = 0; i < 4; i++) {
+      showFlash();
+      
+      // Capture photo with current filter
+      const photo = capturePhoto();
+      
+      // Create PhotoData with current settings
+      const photoData = new PhotoData(
+        photo,
+        filterSelect.value,
+        frameSelect.value
+      );
+      
+      // Get framed image
+      const framedPhoto = await photoData.getFramedImage();
+      
+      // Store original photo data
+      capturedPhotos.push(photoData);
+      
+      // Update preview
+      if (!previewContainer) {
+        previewContainer = createPreviewContainer();
+        photoStrip.appendChild(previewContainer);
+      }
+      
+      addPhotoToPreview(previewContainer, framedPhoto, capturedPhotos.length - 1);
+
+      if (i < 3) {
+        await countdown(2);
+      }
+    }
+
+    addDownloadButton();
+    
+  } catch (error) {
+    console.error('Error taking photo:', error);
+  } finally {
+    isCapturing = false;
+    captureBtn.disabled = false;
+  }
+}
+
+// === Photo Processing ===
+function capturePhoto() {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  
+  canvas.width = webcam.videoWidth;
+  canvas.height = webcam.videoHeight;
+  
+  applyFilterToContext(context, filterSelect.value);
+  context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+  
+  return canvas.toDataURL('image/png');
+}
+
+// === Frame Setup ===
+function setupFrames() {
+  // Clear existing options
+  frameSelect.innerHTML = '';
+  
+  // Add options from FRAME_TYPES with friendly names
+  const frameNames = {
+    [FRAME_TYPES.NONE]: 'Không khung',
+    [FRAME_TYPES.WOOD]: 'Khung gỗ',
+    [FRAME_TYPES.VINTAGE]: 'Khung cổ điển',
+    [FRAME_TYPES.GOLD]: 'Khung vàng',
+    [FRAME_TYPES.CLASSIC]: 'Khung cổ điển',
+    [FRAME_TYPES.ELEGANT]: 'Khung thanh lịch',
+    [FRAME_TYPES.ORNATE]: 'Khung hoa văn',
+    [FRAME_TYPES.FLORAL]: 'Khung hoa',
+    [FRAME_TYPES.VICTORIAN]: 'Khung Victorian',
+    [FRAME_TYPES.PINK_CUTE]: 'Khung hồng dễ thương',
+    [FRAME_TYPES.PINK_FLORAL]: 'Khung hoa hồng',
+    [FRAME_TYPES.PINK_HEART]: 'Khung trái tim',
+    [FRAME_TYPES.KITTY]: 'Khung mèo con',
+    [FRAME_TYPES.BUNNY]: 'Khung thỏ con',
+    [FRAME_TYPES.STAR]: 'Khung ngôi sao',
+    [FRAME_TYPES.CLOUD]: 'Khung mây',
+    [FRAME_TYPES.RAINBOW]: 'Khung cầu vồng'
+  };
+  
+  Object.values(FRAME_TYPES).forEach(frameType => {
+    const option = document.createElement('option');
+    option.value = frameType;
+    option.textContent = frameNames[frameType];
+    frameSelect.appendChild(option);
+  });
+
+  // Validate frame type before applying
+  frameSelect.addEventListener('change', () => {
+    const selectedFrame = frameSelect.value;
+    if (!FRAME_TYPES[selectedFrame.toUpperCase()]) {
+      console.error(`Invalid frame type: ${selectedFrame}`);
+      return;
+    }
+    
+    if (capturedPhotos.length > 0) {
+      updatePreviewWithFrame(selectedFrame);
+    }
+  });
+}
+
+// === Apply Frame to Photo ===
+async function applyFrameToPhoto(photoData, frameType) {
+  if (!frameType || frameType === FRAME_TYPES.NONE) return photoData;
+  
+  const frame = FRAME_TEMPLATES[frameType];
+  if (!frame) {
+    console.error(`Frame template not found for type: ${frameType}`);
+    return photoData;
+  }
+
+  return new Promise((resolve, reject) => {
+    const photoImg = new Image();
+    photoImg.crossOrigin = 'anonymous';
+
+    photoImg.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d', { alpha: false });
+      
+      const totalPadding = frame.padding * 2;
+      const borderWidth = parseInt(frame.border);
+      canvas.width = photoImg.width + totalPadding;
+      canvas.height = photoImg.height + totalPadding;
+
+      // Add rounded corners
+      ctx.save();
+      const radius = 20;
+      ctx.beginPath();
+      ctx.moveTo(radius, 0);
+      ctx.lineTo(canvas.width - radius, 0);
+      ctx.quadraticCurveTo(canvas.width, 0, canvas.width, radius);
+      ctx.lineTo(canvas.width, canvas.height - radius);
+      ctx.quadraticCurveTo(canvas.width, canvas.height, canvas.width - radius, canvas.height);
+      ctx.lineTo(radius, canvas.height);
+      ctx.quadraticCurveTo(0, canvas.height, 0, canvas.height - radius);
+      ctx.lineTo(0, radius);
+      ctx.quadraticCurveTo(0, 0, radius, 0);
+      ctx.closePath();
+      ctx.clip();
+
+      // Draw outer border
+      ctx.fillStyle = frame.border.split(' ')[2];
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw inner background with pattern if available
+      if (frame.patternGenerator) {
+        const pattern = frame.patternGenerator(
+          ctx,
+          canvas.width - borderWidth * 2,
+          canvas.height - borderWidth * 2
+        );
+        ctx.fillStyle = pattern;
+        ctx.fillRect(
+          borderWidth,
+          borderWidth,
+          canvas.width - borderWidth * 2,
+          canvas.height - borderWidth * 2
+        );
+      } else {
+        ctx.fillStyle = frame.background;
+        ctx.fillRect(
+          borderWidth,
+          borderWidth,
+          canvas.width - borderWidth * 2,
+          canvas.height - borderWidth * 2
+        );
+      }
+
+      // Draw photo
+      ctx.drawImage(photoImg, 
+        frame.padding,
+        frame.padding,
+        photoImg.width,
+        photoImg.height
+      );
+
+      // Add shadow
+      ctx.restore();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+
+      try {
+        const dataUrl = canvas.toDataURL('image/png');
+        resolve(dataUrl);
+      } catch (error) {
+        console.error('Error converting canvas to data URL:', error);
+        resolve(photoData);
+      }
+    };
+
+    photoImg.onerror = () => {
+      console.error('Error loading photo for frame application');
+      resolve(photoData);
+    };
+    photoImg.src = photoData;
+  });
+}
+
+// === UI Effects ===
 function showFlash() {
   const flash = document.createElement('div');
   flash.className = 'flash';
@@ -100,7 +1141,6 @@ function showFlash() {
   });
 }
 
-// === Countdown animation ===
 function countdown(seconds) {
   return new Promise((resolve) => {
     let current = seconds;
@@ -120,7 +1160,7 @@ function countdown(seconds) {
   });
 }
 
-// === Filter handling ===
+// === Filter Handling ===
 function setupFilters() {
   filterSelect.addEventListener('change', () => {
     const selectedFilter = filterSelect.value;
@@ -128,7 +1168,6 @@ function setupFilters() {
   });
 }
 
-// === Get filter style based on filter name ===
 function getFilterStyle(filterName) {
   const filterStyles = {
     // Basic Filters
@@ -188,7 +1227,6 @@ function getFilterStyle(filterName) {
   return filterStyles[filterName] || '';
 }
 
-// === Apply filter to canvas context ===
 function applyFilterToContext(context, filterName) {
   const filterStyle = getFilterStyle(filterName);
   if (filterStyle) {
@@ -196,34 +1234,13 @@ function applyFilterToContext(context, filterName) {
   }
 }
 
-// === Capture photo ===
-function capturePhoto() {
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  
-  canvas.width = webcam.videoWidth;
-  canvas.height = webcam.videoHeight;
-  
-  // Áp dụng filter cho context trước khi vẽ
-  applyFilterToContext(context, filterSelect.value);
-  
-  // Vẽ ảnh từ webcam
-  context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
-  
-  return canvas.toDataURL('image/png');
+// === Preview Handling ===
+function createPreviewContainer() {
+  const container = document.createElement('div');
+  container.className = 'photo-container';
+  return container;
 }
 
-// === Download photo ===
-function downloadPhoto(photoUrl, index) {
-  const link = document.createElement('a');
-  link.href = photoUrl;
-  link.download = `photo_${index + 1}.png`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-// === Add photo to preview ===
 function addPhotoToPreview(container, photoUrl, index) {
   const photoWrapper = document.createElement('div');
   photoWrapper.className = 'photo-wrapper';
@@ -232,84 +1249,80 @@ function addPhotoToPreview(container, photoUrl, index) {
   img.src = photoUrl;
   img.className = 'fade-in';
   
+  // Add thumbnail
+  const thumbnail = document.createElement('div');
+  thumbnail.className = 'thumbnail';
+  thumbnail.onclick = () => showFullSize(photoUrl);
+  
+  const thumbImg = document.createElement('img');
+  thumbImg.src = photoUrl;
+  thumbnail.appendChild(thumbImg);
+  
   photoWrapper.appendChild(img);
+  photoWrapper.appendChild(thumbnail);
   container.appendChild(photoWrapper);
 }
 
-// === Create preview container ===
-function createPreviewContainer() {
-  const container = document.createElement('div');
-  container.className = 'photo-container';
-  return container;
+function showFullSize(photoUrl) {
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  
+  const img = document.createElement('img');
+  img.src = photoUrl;
+  
+  modal.appendChild(img);
+  document.body.appendChild(modal);
+  
+  modal.onclick = () => modal.remove();
 }
 
-// === Apply frame to photo ===
-async function applyFrameToPhoto(photoData, framePath) {
-  if (!framePath) return photoData;
+async function updatePreviewWithFrame(frameType) {
+  if (!previewContainer) return;
+  
+  showLoading();
+  previewContainer.innerHTML = '';
 
-  return new Promise((resolve, reject) => {
-    const photoImg = new Image();
-    photoImg.crossOrigin = 'anonymous';
-
-    photoImg.onload = async () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
-      canvas.width = photoImg.width;
-      canvas.height = photoImg.height;
-      ctx.drawImage(photoImg, 0, 0, canvas.width, canvas.height);
-
-      try {
-        const frameImg = new Image();
-        frameImg.crossOrigin = 'anonymous';
-
-        frameImg.onload = () => {
-          ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/png'));
-        };
-
-        frameImg.onerror = () => resolve(photoData);
-        frameImg.src = framePath;
-      } catch (error) {
-        console.error('Frame application failed:', error);
-        resolve(photoData);
-      }
-    };
-
-    photoImg.onerror = () => resolve(photoData);
-    photoImg.src = photoData;
-  });
+  try {
+    for (let i = 0; i < capturedPhotos.length; i++) {
+      const photo = capturedPhotos[i];
+      const framedPhoto = await photo.updateFrame(frameType);
+      addPhotoToPreview(previewContainer, framedPhoto, i);
+    }
+  } catch (error) {
+    console.error('Error updating preview:', error);
+  } finally {
+    hideLoading();
+  }
 }
 
-// === Create combined image ===
-function createCombinedImage() {
-  if (capturedPhotos.length === 0) return null;
-
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  
-  // Tính toán kích thước canvas
-  const photoWidth = webcam.videoWidth;
-  const photoHeight = webcam.videoHeight;
-  const padding = 20;
-  const totalHeight = (photoHeight + padding) * capturedPhotos.length - padding;
-  
-  canvas.width = photoWidth;
-  canvas.height = totalHeight;
-  
-  // Vẽ từng ảnh
-  capturedPhotos.forEach((photo, index) => {
-    const img = new Image();
-    img.src = photo;
-    ctx.drawImage(img, 0, index * (photoHeight + padding), photoWidth, photoHeight);
-  });
-  
-  return canvas.toDataURL('image/png');
+// === Reset Functionality ===
+function resetPhotos() {
+  capturedPhotos = [];
+  originalPhotos = [];
+  if (previewContainer) {
+    previewContainer.remove();
+    previewContainer = null;
+  }
+  const downloadBtn = document.querySelector('.download-all-btn');
+  if (downloadBtn) {
+    downloadBtn.remove();
+  }
 }
 
-// === Show download combined ===
-function showDownloadCombined() {
-  const combinedImage = createCombinedImage();
+// === Download Functionality ===
+function addDownloadButton() {
+  const downloadBtn = document.createElement('button');
+  downloadBtn.className = 'download-all-btn';
+  downloadBtn.innerHTML = '<i class="fas fa-download"></i> Tải tất cả ảnh';
+  downloadBtn.onclick = showDownloadCombined;
+  photoStrip.appendChild(downloadBtn);
+}
+
+async function showDownloadCombined() {
+  showLoading();
+  const combinedImage = await createCombinedImage();
+  hideLoading();
+  
   if (!combinedImage) return;
 
   const link = document.createElement('a');
@@ -318,92 +1331,55 @@ function showDownloadCombined() {
   link.click();
 }
 
-// === Take photo sequence ===
-async function takePhotoSequence() {
-  if (isCapturing) return;
-  isCapturing = true;
+async function createCombinedImage() {
+  if (capturedPhotos.length === 0) return null;
 
+  showLoading();
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
   try {
-    // Hiệu ứng đếm ngược ban đầu
-    await countdown(3);
+    // Get dimensions from first photo
+    const firstPhoto = capturedPhotos[0];
+    const firstFramedPhoto = await firstPhoto.getFramedImage();
+    const firstImg = new Image();
+    firstImg.src = firstFramedPhoto;
     
-    // Chụp 4 ảnh liên tục
-    for (let i = 0; i < 4; i++) {
-      // Hiệu ứng flash
-      showFlash();
-      
-      // Chụp ảnh
-      const photo = capturePhoto();
-      capturedPhotos.push(photo);
-      
-      // Áp dụng frame nếu có
-      const framedPhoto = await applyFrameToPhoto(photo, frameSelect.value);
-      
-      // Thêm vào preview
-      if (!previewContainer) {
-        previewContainer = createPreviewContainer();
-        photoStrip.appendChild(previewContainer);
-      }
-      
-      addPhotoToPreview(previewContainer, framedPhoto, capturedPhotos.length - 1);
+    await new Promise((resolve) => {
+      firstImg.onload = () => {
+        const photoWidth = firstImg.width;
+        const photoHeight = firstImg.height;
+        const padding = 20;
+        const totalHeight = (photoHeight + padding) * capturedPhotos.length - padding;
+        
+        canvas.width = photoWidth;
+        canvas.height = totalHeight;
+        resolve();
+      };
+    });
 
-      // Nếu chưa phải ảnh cuối cùng thì đếm ngược 2 giây
-      if (i < 3) {
-        await new Promise(resolve => {
-          let count = 2;
-          const timer = setInterval(() => {
-            countdownEl.textContent = count;
-            countdownEl.classList.remove('hidden');
-            count--;
-            
-            if (count < 0) {
-              clearInterval(timer);
-              countdownEl.classList.add('hidden');
-              resolve();
-            }
-          }, 1000);
-        });
-      }
+    // Draw photos sequentially
+    for (let i = 0; i < capturedPhotos.length; i++) {
+      const photo = capturedPhotos[i];
+      const framedPhoto = await photo.getFramedImage();
+      const img = new Image();
+      img.src = framedPhoto;
+      
+      await new Promise((resolve) => {
+        img.onload = () => {
+          const photoHeight = img.height;
+          const padding = 20;
+          ctx.drawImage(img, 0, i * (photoHeight + padding), img.width, photoHeight);
+          resolve();
+        };
+      });
     }
-
-    // Thêm nút tải ảnh sau khi chụp xong
-    const downloadBtn = document.createElement('button');
-    downloadBtn.className = 'download-all-btn';
-    downloadBtn.innerHTML = '<i class="fas fa-download"></i> Tải tất cả ảnh';
-    downloadBtn.onclick = showDownloadCombined;
-    photoStrip.appendChild(downloadBtn);
     
+    return canvas.toDataURL('image/png');
   } catch (error) {
-    console.error('Error taking photo:', error);
+    console.error('Error creating combined image:', error);
+    return null;
   } finally {
-    isCapturing = false;
+    hideLoading();
   }
 }
-
-// === Initialize application ===
-document.addEventListener('DOMContentLoaded', () => {
-  if (!initializeElements()) {
-    console.error('Failed to initialize application');
-    return;
-  }
-
-  // Event listeners
-  captureBtn.addEventListener('click', takePhotoSequence);
-  resetBtn.addEventListener('click', () => {
-    capturedPhotos = [];
-    originalPhotos = [];
-    if (previewContainer) {
-      previewContainer.remove();
-      previewContainer = null;
-    }
-    // Xóa nút tải ảnh nếu có
-    const downloadBtn = document.querySelector('.download-all-btn');
-    if (downloadBtn) {
-      downloadBtn.remove();
-    }
-  });
-
-  // Start application
-  startWebcam();
-  setupFilters();
-});
