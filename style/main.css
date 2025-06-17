@@ -196,34 +196,58 @@ label {
 
 .button-control {
   display: flex;
+  flex-direction: row;
   gap: 10px;
+  margin-top: 15px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
-button {
-  padding: 10px 20px;
+.button-control button {
+  flex: 0 1 auto;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 6px;
   border: none;
-  border-radius: 5px;
-  background: #007bff;
-  color: white;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  vertical-align: middle;
 }
 
-button:hover {
-  background: #0056b3;
+#capture-btn {
+  background-color: #007BFF;
+  color: white;
 }
 
-button:disabled {
-  background: #ccc;
+#flip-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.button-control button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.button-control button:active {
+  transform: translateY(0);
+}
+
+.button-control button:disabled {
+  background-color: #cccccc;
   cursor: not-allowed;
-}
-
-#reset-btn {
-  background: #dc3545;
-}
-
-#reset-btn:hover {
-  background: #c82333;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Countdown */
@@ -291,6 +315,18 @@ button:disabled {
   .photo-strip {
     max-width: 100%;
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .button-control {
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .button-control button {
+    width: auto;
+    margin: 0;
   }
 }
 
@@ -747,4 +783,31 @@ button:disabled {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* Button styles */
+#flip-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  margin: 10px 0;
+}
+
+#flip-btn:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+#flip-btn:active {
+  transform: scale(0.95);
+}
+
+/* Add transition for webcam flip */
+#webcam {
+  transition: transform 0.3s ease;
 }

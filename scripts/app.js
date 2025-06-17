@@ -1402,7 +1402,7 @@ async function updatePreviewWithFrame(frameType) {
 function addDownloadButton() {
   const downloadBtn = document.createElement('button');
   downloadBtn.className = 'download-all-btn';
-  downloadBtn.innerHTML = '<i class="fas fa-download"></i> Tải tất cả ảnh';
+  downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
   downloadBtn.style.backgroundColor = '#2196F3';
   downloadBtn.style.color = 'white';
   downloadBtn.style.border = 'none';
@@ -1525,7 +1525,7 @@ function setUIState(isCapturing) {
   
   // Update button text and style
   if (isCapturing) {
-    captureBtn.textContent = 'Đang chụp...';
+    captureBtn.textContent = 'Taking Photos...';
     captureBtn.style.backgroundColor = '#666';
     captureBtn.style.cursor = 'not-allowed';
   } else {
